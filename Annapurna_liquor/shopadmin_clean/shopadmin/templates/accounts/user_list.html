@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<!-- Top Metrics Row -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(0, 176, 144, 0.12); color: var(--brand);">
+        <i class="bi bi-people-fill"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Users</span>
+        <span class="stat-value">{{ total_users }}</span>
+        <span class="stat-subtext text-muted">Store staff & administrators</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #3B82F6;">
+        <i class="bi bi-person-check-fill"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Active Accounts</span>
+        <span class="stat-value">{{ active_users }}</span>
+        <span class="stat-subtext text-muted">Able to log into dashboard</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(229, 193, 88, 0.15); color: #D4A359;">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Administrators</span>
+        <span class="stat-value">{{ admin_users }}</span>
+        <span class="stat-subtext text-muted">Full system privileges</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Table Card -->
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <form class="d-flex gap-2" method="get">
+      <div class="position-relative" style="width:260px;">
+        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control ps-4" placeholder="Search by username, email...">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted" style="font-size:.85rem;"></i>
+      </div>
+      <button class="btn btn-outline-brand" type="submit" title="Search"><i class="bi bi-search"></i></button>
+      {% if request.GET.q %}
+        <a href="{% url 'accounts:user_list' %}" class="btn btn-outline-brand" title="Clear Search"><i class="bi bi-x-lg"></i></a>
+      {% endif %}
+    </form>
+
+    <button type="button" class="btn btn-brand" data-bs-toggle="modal" data-bs-target="#addUserModal">
+      <i class="bi bi-person-plus-fill me-1"></i>Add New User
+    </button>
+  </div>
+
+  {% if users %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email Address</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Date Joined</th>
+          <th>Last Login</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="user-avatar-circle" style="width:34px; height:34px; font-size:12px; font-weight:700; background: rgba(0, 176, 144, 0.15); color: var(--brand); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                {{ u.username|slice:":2"|upper }}
+              </div>
+              <div>
+                <span class="product-name fw-bold d-block">{{ u.username }}</span>
+                {% if u.get_full_name %}
+                  <span class="text-muted" style="font-size:0.75rem;">{{ u.get_full_name }}</span>
+                {% endif %}
+                {% if u == request.user %}
+                  <span class="badge bg-secondary-subtle text-secondary" style="font-size:0.65rem; padding: 2px 6px;">You</span>
+                {% endif %}
+              </div>
+            </div>
+          </td>
+          <td>
+            {% if u.email %}
+              <span style="font-size:0.85rem; color: var(--text-color);">{{ u.email }}</span>
+            {% else %}
+              <span class="text-muted" style="font-size:0.85rem;">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if u.is_superuser or u.profile.role == 'admin' %}
+              <span class="badge" style="background: rgba(229, 193, 88, 0.15); color: #B8860B; border: 1px solid rgba(229, 193, 88, 0.4); font-size: 0.75rem; font-weight:600; padding: 4px 8px;">
+                <i class="bi bi-shield-fill me-1"></i>Admin
+              </span>
+            {% else %}
+              <span class="badge" style="background: rgba(0, 176, 144, 0.1); color: var(--brand); border: 1px solid rgba(0, 176, 144, 0.3); font-size: 0.75rem; font-weight:600; padding: 4px 8px;">
+                <i class="bi bi-person-fill me-1"></i>Staff
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            {% if u.is_active %}
+              <span class="status-pill completed">Active</span>
+            {% else %}
+              <span class="status-pill pending">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="text-muted" style="font-size:.85rem;">{{ u.date_joined|date:"M d, Y" }}</td>
+          <td class="text-muted" style="font-size:.85rem;">
+            {% if u.last_login %}
+              {{ u.last_login|date:"M d, Y H:i" }}
+            {% else %}
+              Never
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <div class="d-inline-flex gap-1">
+              {% if u != request.user %}
+                <form method="post" action="{% url 'accounts:user_toggle_status' u.pk %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm {% if u.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}" title="{% if u.is_active %}Deactivate Account{% else %}Activate Account{% endif %}" style="font-size:0.75rem; padding: 4px 8px;">
+                    <i class="bi {% if u.is_active %}bi-person-slash{% else %}bi-person-check{% endif %}"></i>
+                  </button>
+                </form>
+
+                <form method="post" action="{% url 'accounts:user_delete' u.pk %}" style="display:inline;" onsubmit="return confirm('Are you sure you want to permanently delete user &quot;{{ u.username }}&quot;?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete User" style="font-size:0.75rem; padding: 4px 8px;">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              {% else %}
+                <span class="text-muted fst-italic" style="font-size:0.75rem; padding: 4px 8px;">Current session</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination pagination-sm justify-content-center">
+        {% for p in paginator.page_range %}
+          <li class="page-item {% if p == page_obj.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ p }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+
+  {% else %}
+    <div class="empty-state text-center py-5">
+      <div style="font-size: 2.5rem; color: #94A3B8; margin-bottom: 12px;"><i class="bi bi-people"></i></div>
+      <h6 class="fw-bold mb-1">No users found</h6>
+      <p class="text-muted" style="font-size:.85rem;">Try adjusting your search criteria or add a new user.</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 12px; border: 1px solid var(--border-color, #E2E8F0); background: var(--bg-card, #FFFFFF);">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-color, #E2E8F0);">
+        <h5 class="modal-title fw-bold" id="addUserModalLabel">
+          <i class="bi bi-person-plus-fill me-2" style="color: var(--brand);"></i>Add New User
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'accounts:user_create' %}">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-semibold" style="font-size: 0.85rem;">Username <span class="text-danger">*</span></label>
+              <input type="text" name="username" class="form-control" placeholder="e.g. rohan_staff" required autofocus>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size: 0.85rem;">First Name</label>
+              <input type="text" name="first_name" class="form-control" placeholder="Rohan">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size: 0.85rem;">Last Name</label>
+              <input type="text" name="last_name" class="form-control" placeholder="Sharma">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" style="font-size: 0.85rem;">Email Address</label>
+              <input type="email" name="email" class="form-control" placeholder="staff@annapurnastore.com">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" style="font-size: 0.85rem;">Password <span class="text-danger">*</span></label>
+              <input type="password" name="password" class="form-control" placeholder="Enter secure password" required minlength="4">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" style="font-size: 0.85rem;">Privilege Role <span class="text-danger">*</span></label>
+              <select name="role" class="form-select">
+                <option value="staff" selected>Staff — Catalog & Sales management</option>
+                <option value="admin">Administrator — Full store & system privileges</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" name="is_active" id="isActiveCheck" checked>
+                <label class="form-check-label" for="isActiveCheck" style="font-size: 0.85rem;">Account is active and can sign in</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid var(--border-color, #E2E8F0);">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-brand"><i class="bi bi-check-lg me-1"></i>Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

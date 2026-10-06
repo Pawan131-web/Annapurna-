@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Suppliers{% endblock %}
+{% block page_title %}Suppliers{% endblock %}
+{% block content %}
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <form class="d-flex gap-2" method="get">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search suppliers" style="width:240px;">
+      <button class="btn btn-outline-brand" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+    <a href="{% url 'suppliers:add' %}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>Add Supplier</a>
+  </div>
+
+  {% if suppliers %}
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Contact</th><th>Phone</th><th>Products</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    {% for s in suppliers %}
+      <tr>
+        <td><a href="{% url 'suppliers:detail' s.pk %}" style="font-weight:600;">{{ s.name }}</a></td>
+        <td>{{ s.contact_person|default:"—" }}</td>
+        <td class="mono">{{ s.phone|default:"—" }}</td>
+        <td>{{ s.product_count }}</td>
+        <td>{% if s.is_active %}<span class="pill pill-success">Active</span>{% else %}<span class="pill pill-muted">Inactive</span>{% endif %}</td>
+        <td class="text-end">
+          <a href="{% url 'suppliers:edit' s.pk %}" class="btn btn-sm btn-outline-brand"><i class="bi bi-pencil"></i></a>
+          <a href="{% url 'suppliers:delete' s.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="empty-state"><i class="bi bi-truck"></i>No suppliers yet. Add your first one.</div>
+  {% endif %}
+</div>
+{% endblock %}

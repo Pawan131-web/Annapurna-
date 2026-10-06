@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Record Sale{% endblock %}
+{% block page_title %}Record Sale{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+<style>
+  .ts-control {
+    border-radius: 10px !important;
+    padding: .45rem .85rem !important;
+    font-size: .9rem !important;
+    background-color: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+  }
+  .ts-dropdown {
+    border-radius: 10px !important;
+    background-color: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+    z-index: 2000 !important;
+  }
+  .ts-dropdown .option {
+    padding: .5rem .85rem !important;
+    color: var(--text-main) !important;
+  }
+  .ts-dropdown .option.active, .ts-dropdown .option:hover {
+    background-color: var(--accent-soft) !important;
+    color: var(--accent) !important;
+  }
+  [data-theme="dark"] .ts-control input { color: #fff !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="section-card" style="max-width:900px; margin: 0 auto;">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <h3 class="section-title mb-0">Record New Sale</h3>
+    <a href="{% url 'sales:list' %}" class="btn btn-outline-brand btn-sm"><i class="bi bi-arrow-left me-1"></i>Back to Sales</a>
+  </div>
+
+  <form method="post" id="sale-form">
+    {% csrf_token %}
+    
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Customer Name</label>
+        {{ sale_form.customer_name }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Customer Phone</label>
+        {{ sale_form.customer_phone }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Payment Method *</label>
+        {{ sale_form.payment_method }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Note / Remarks</label>
+        {{ sale_form.note }}
+      </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="card-surface p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 fw-bold" style="font-size: 1rem; color:var(--text-main);">Items Sold</h5>
+        <span class="badge bg-light text-dark border fw-semibold">Available Products: {{ active_products|length }}</span>
+      </div>
+
+      {{ formset.management_form }}
+
+      <div class="table-responsive" style="overflow: visible;">
+        <table class="table align-middle" id="items-table" style="font-size:.88rem;">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 48%;">Search & Select Product *</th>
+              <th style="width: 18%;">Qty *</th>
+              <th style="width: 20%;">Subtotal</th>
+              <th style="width: 14%; text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="item-rows">
+            {% for item_form in formset %}
+            <tr class="item-row">
+              <td>
+                {{ item_form.product }}
+                {% if item_form.product.errors %}
+                  <div class="text-danger mt-1" style="font-size:.75rem;">{{ item_form.product.errors.0 }}</div>
+                {% endif %}
+                <div class="product-stock-hint text-muted mt-1" style="font-size:.75rem;"></div>
+              </td>
+              <td>
+                {{ item_form.quantity }}
+                {% if item_form.quantity.errors %}
+                  <div class="text-danger mt-1" style="font-size:.75rem;">{{ item_form.quantity.errors.0 }}</div>
+                {% endif %}
+              </td>
+              <td>
+                <span class="row-subtotal fw-bold text-dark">Rs. 0</span>
+              </td>
+              <td class="text-end">
+                {% if item_form.DELETE %}
+                  <div class="d-none">{{ item_form.DELETE }}</div>
+                {% endif %}
+                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn" title="Remove item">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <button type="button" id="add-row-btn" class="btn btn-sm btn-outline-brand">
+          <i class="bi bi-plus-lg me-1"></i>Add Another Item
+        </button>
+        <div class="text-end">
+          <span class="text-muted me-2" style="font-size:.88rem;">Grand Total:</span>
+          <span class="fw-bold fs-5 text-success" id="grand-total-display">Rs. 0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-2 d-flex gap-2">
+      <button type="submit" class="btn btn-brand px-4"><i class="bi bi-check-circle me-1"></i>Complete Sale</button>
+      <a href="{% url 'sales:list' %}" class="btn btn-outline-brand">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+const productsData = {{ products_data_json|safe }};
+const productsMap = {};
+productsData.forEach(p => { productsMap[p.id] = p; });
+
+function initSearchableSelect(selectEl) {
+  if (!selectEl || selectEl.tomselect) return;
+  const ts = new TomSelect(selectEl, {
+    create: false,
+    placeholder: 'Search Product',
+    dropdownParent: 'body',
+  });
+  ts.on('change', () => {
+    const row = selectEl.closest('.item-row');
+    if (row) updateRowCalculations(row);
+  });
+}
+
+function updateRowCalculations(row) {
+  const select = row.querySelector('.product-select');
+  const qtyInput = row.querySelector('.qty-input');
+  const subtotalSpan = row.querySelector('.row-subtotal');
+  const stockHint = row.querySelector('.product-stock-hint');
+
+  if (!select || !qtyInput) return;
+
+  const productId = select.value;
+  const qty = parseInt(qtyInput.value) || 0;
+
+  if (productId && productsMap[productId]) {
+    const prod = productsMap[productId];
+    const subtotal = prod.price * qty;
+    subtotalSpan.innerText = 'Rs. ' + subtotal.toLocaleString();
+    stockHint.innerText = `Available Stock: ${prod.stock} ${prod.unit} | Price: Rs. ${prod.price}`;
+    
+    if (qty > prod.stock) {
+      stockHint.classList.remove('text-muted');
+      stockHint.classList.add('text-danger');
+      stockHint.innerText = `⚠️ Only ${prod.stock} left in stock!`;
+    } else {
+      stockHint.classList.remove('text-danger');
+      stockHint.classList.add('text-muted');
+    }
+  } else {
+    subtotalSpan.innerText = 'Rs. 0';
+    stockHint.innerText = '';
+  }
+
+  updateGrandTotal();
+}
+
+function updateGrandTotal() {
+  let grandTotal = 0;
+  document.querySelectorAll('.item-row').forEach(row => {
+    const deleteCheck = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+    if (deleteCheck && deleteCheck.checked) return;
+
+    const select = row.querySelector('.product-select');
+    const qtyInput = row.querySelector('.qty-input');
+    if (select && qtyInput && select.value && productsMap[select.value]) {
+      const qty = parseInt(qtyInput.value) || 0;
+      grandTotal += productsMap[select.value].price * qty;
+    }
+  });
+  document.getElementById('grand-total-display').innerText = 'Rs. ' + grandTotal.toLocaleString();
+}
+
+function bindRowEvents(row) {
+  const select = row.querySelector('.product-select');
+  const qtyInput = row.querySelector('.qty-input');
+  const removeBtn = row.querySelector('.remove-row-btn');
+  const deleteCheck = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+
+  if (select) {
+    initSearchableSelect(select);
+  }
+  if (qtyInput) {
+    qtyInput.addEventListener('input', () => updateRowCalculations(row));
+  }
+
+  if (removeBtn) {
+    removeBtn.addEventListener('click', () => {
+      const visibleRows = document.querySelectorAll('.item-row:not([style*="display: none"])');
+      if (visibleRows.length <= 1) {
+        alert('Sale must contain at least one item.');
+        return;
+      }
+      if (deleteCheck) {
+        deleteCheck.checked = true;
+        row.style.display = 'none';
+      } else {
+        if (select && select.tomselect) select.tomselect.destroy();
+        row.remove();
+      }
+      updateGrandTotal();
+    });
+  }
+
+  updateRowCalculations(row);
+}
+
+document.querySelectorAll('.item-row').forEach(bindRowEvents);
+
+// Dynamic Add Row Handler
+document.getElementById('add-row-btn').addEventListener('click', function() {
+  const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+  const rows = document.querySelectorAll('.item-row');
+  if (!rows.length) return;
+
+  const idx = parseInt(totalForms.value);
+  const templateRow = rows[0];
+
+  // Destroy tomselect on clone source if present before cloning
+  const selectInTemplate = templateRow.querySelector('.product-select');
+  let tomInstance = null;
+  if (selectInTemplate && selectInTemplate.tomselect) {
+    tomInstance = selectInTemplate.tomselect;
+  }
+
+  const newRow = templateRow.cloneNode(true);
+  newRow.style.display = '';
+
+  // Clean up tomselect elements in cloned node
+  const tsWrapper = newRow.querySelector('.ts-wrapper');
+  if (tsWrapper) tsWrapper.remove();
+  const clonedSelect = newRow.querySelector('.product-select');
+  if (clonedSelect) {
+    clonedSelect.removeAttribute('id');
+    clonedSelect.classList.remove('tomselected', 'ts-hidden-accessible');
+    clonedSelect.style.display = '';
+    clonedSelect.selectedIndex = 0;
+  }
+
+  newRow.querySelectorAll('input, select').forEach(el => {
+    if (el.name) el.name = el.name.replace(/-\d+-/, `-${idx}-`);
+    if (el.id) el.id = el.id.replace(/-\d+-/, `-${idx}-`);
+    if (el.type === 'checkbox') el.checked = false;
+    else if (el.name && el.name.endsWith('-quantity')) el.value = '1';
+  });
+
+  const stockHint = newRow.querySelector('.product-stock-hint');
+  if (stockHint) stockHint.innerText = '';
+  const subtotalSpan = newRow.querySelector('.row-subtotal');
+  if (subtotalSpan) subtotalSpan.innerText = 'Rs. 0';
+
+  document.getElementById('item-rows').appendChild(newRow);
+  totalForms.value = idx + 1;
+  bindRowEvents(newRow);
+});
+</script>
+{% endblock %}

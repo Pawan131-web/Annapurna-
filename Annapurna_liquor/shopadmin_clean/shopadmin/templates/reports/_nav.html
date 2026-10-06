@@ -1,0 +1,6 @@
+<div class="d-flex gap-2 mb-3 flex-wrap">
+  <a href="{% url 'reports:sales' %}" class="btn btn-sm {% if active == 'sales' %}btn-brand{% else %}btn-outline-brand{% endif %}">Sales</a>
+  <a href="{% url 'reports:inventory' %}" class="btn btn-sm {% if active == 'inventory' %}btn-brand{% else %}btn-outline-brand{% endif %}">Inventory</a>
+  <a href="{% url 'reports:performance' %}" class="btn btn-sm {% if active == 'performance' %}btn-brand{% else %}btn-outline-brand{% endif %}">Best / Least Selling</a>
+  <a href="{% url 'reports:profit' %}" class="btn btn-sm {% if active == 'profit' %}btn-brand{% else %}btn-outline-brand{% endif %}">Revenue & Profit</a>
+</div>

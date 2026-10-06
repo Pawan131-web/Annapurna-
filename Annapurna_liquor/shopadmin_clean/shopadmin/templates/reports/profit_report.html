@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Revenue & Profit{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block content %}
+{% include "reports/_nav.html" with active="profit" %}
+
+<div class="section-card">
+  <form class="d-flex gap-2 flex-wrap mb-4" method="get">
+    <input type="date" name="from" value="{{ date_from }}" class="form-control" style="width:170px;" title="From date">
+    <input type="date" name="to" value="{{ date_to }}" class="form-control" style="width:170px;" title="To date">
+    <button class="btn btn-outline-brand" type="submit">Filter</button>
+    <a class="btn btn-outline-brand ms-auto" href="?from={{ date_from }}&to={{ date_to }}&export=csv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+    <a class="btn btn-outline-brand" href="?from={{ date_from }}&to={{ date_to }}&export=xlsx"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+  </form>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card-v2">
+        <div class="stat-label-text">Revenue</div>
+        <div class="stat-main-value text-success">Rs. {{ total_revenue|floatformat:2 }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card-v2">
+        <div class="stat-label-text">Cost</div>
+        <div class="stat-main-value text-primary">Rs. {{ total_cost|floatformat:2 }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card-v2">
+        <div class="stat-label-text">Profit</div>
+        <div class="stat-main-value text-warning">Rs. {{ total_profit|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+
+  {% if rows %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th class="text-end">Qty Sold</th>
+          <th class="text-end">Revenue</th>
+          <th class="text-end">Cost</th>
+          <th class="text-end">Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>
+            <div class="product-cell">
+              {% if r.product and r.product.primary_image %}
+                <img src="{{ r.product.primary_image.image.url }}" alt="{{ r.name }}" class="product-thumb-img">
+              {% else %}
+                <div class="product-thumb"><i class="bi bi-box-seam"></i></div>
+              {% endif %}
+              {% if r.product %}
+                <a href="{% url 'products:detail' r.product.pk %}" class="product-name fw-bold">{{ r.name }}</a>
+              {% else %}
+                <span class="product-name fw-bold">{{ r.name }}</span>
+              {% endif %}
+            </div>
+          </td>
+          <td class="text-end fw-bold">{{ r.qty }}</td>
+          <td class="text-end fw-bold" style="color:var(--accent);">Rs. {{ r.revenue|floatformat:2 }}</td>
+          <td class="text-end text-muted">Rs. {{ r.cost|floatformat:2 }}</td>
+          <td class="text-end fw-bold text-success">Rs. {{ r.profit|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="empty-state py-4"><i class="bi bi-cash-coin"></i>No sales in this date range.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Sales{% endblock %}
+{% block page_title %}Sales{% endblock %}
+
+{% block content %}
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <form class="d-flex gap-2 flex-wrap" method="get">
+      <div class="position-relative" style="width:190px;">
+        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control ps-4" placeholder="Search invoice">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted" style="font-size:.85rem;"></i>
+      </div>
+      <input type="date" name="from" value="{{ request.GET.from|default:'' }}" class="form-control" style="width:160px;" title="From date">
+      <input type="date" name="to" value="{{ request.GET.to|default:'' }}" class="form-control" style="width:160px;" title="To date">
+      <button class="btn btn-outline-brand" type="submit" title="Search"><i class="bi bi-search"></i></button>
+      {% if request.GET.q or request.GET.from or request.GET.to %}
+        <a href="{% url 'sales:list' %}" class="btn btn-outline-brand" title="Clear Filters"><i class="bi bi-x-lg"></i></a>
+      {% endif %}
+    </form>
+    <a href="{% url 'sales:add' %}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>Record Sale</a>
+  </div>
+
+  {% if sales %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Invoice</th>
+          <th>Customer</th>
+          <th>Payment</th>
+          <th>Items</th>
+          <th class="text-end">Total</th>
+          <th>Date</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for s in sales %}
+        <tr>
+          <td class="mono">
+            <a href="{% url 'sales:receipt' s.pk %}" class="order-id-link fw-bold">{{ s.invoice_number }}</a>
+          </td>
+          <td>{{ s.customer_name|default:"Walk-in" }}</td>
+          <td><span class="pill pill-muted">{{ s.get_payment_method_display }}</span></td>
+          <td style="font-weight: 600;">{{ s.items.count }}</td>
+          <td class="text-end fw-bold" style="color:var(--accent);">Rs. {{ s.total_amount|floatformat:2 }}</td>
+          <td style="font-size:.82rem; color:var(--text-muted);">{{ s.sold_at|date:"M d, Y H:i" }}</td>
+          <td class="text-end">
+            <a href="{% url 'sales:receipt' s.pk %}" class="btn btn-sm btn-outline-brand me-1" title="View Receipt"><i class="bi bi-receipt"></i></a>
+            <a href="{% url 'sales:delete' s.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Sale"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination pagination-sm justify-content-center">
+        {% for p in paginator.page_range %}
+          <li class="page-item {% if p == page_obj.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}&q={{ request.GET.q|default:'' }}&from={{ request.GET.from|default:'' }}&to={{ request.GET.to|default:'' }}">{{ p }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-receipt"></i>
+      <h5 class="mt-2" style="font-weight:700; color:var(--text-main);">No sales recorded yet</h5>
+      <p class="text-muted" style="font-size:.88rem;">Record your first transaction to view sales invoices and analytics.</p>
+      <a href="{% url 'sales:add' %}" class="btn btn-brand mt-2"><i class="bi bi-plus-lg me-1"></i>Record New Sale</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <form class="d-flex gap-2 flex-wrap" method="get">
+      <div class="position-relative" style="width:230px;">
+        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control ps-4" placeholder="Search products...">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted" style="font-size:.85rem;"></i>
+      </div>
+      <select name="category" class="form-select" style="width:170px;" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+          <option value="{{ c.pk }}" {% if request.GET.category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <select name="supplier" class="form-select" style="width:170px;" onchange="this.form.submit()">
+        <option value="">All Suppliers</option>
+        {% for s in suppliers %}
+          <option value="{{ s.pk }}" {% if request.GET.supplier == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+      </select>
+      <select name="stock" class="form-select" style="width:150px;" onchange="this.form.submit()">
+        <option value="">All Stock</option>
+        <option value="low" {% if request.GET.stock == 'low' %}selected{% endif %}>Low Stock Only</option>
+      </select>
+      <button class="btn btn-outline-brand" type="submit" title="Search"><i class="bi bi-search"></i></button>
+      {% if request.GET.q or request.GET.category or request.GET.supplier or request.GET.stock %}
+        <a href="{% url 'products:list' %}" class="btn btn-outline-brand" title="Clear Filters"><i class="bi bi-x-lg"></i></a>
+      {% endif %}
+    </form>
+    <a href="{% url 'products:add' %}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>Add Product</a>
+  </div>
+
+  {% if products %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>
+            <a href="?sort={% if current_sort == 'selling_price' %}-{% endif %}selling_price" class="text-reset">
+              Price <i class="bi bi-arrow-down-up ms-1" style="font-size:.7rem;"></i>
+            </a>
+          </th>
+          <th>
+            <a href="?sort={% if current_sort == 'quantity_in_stock' %}-{% endif %}quantity_in_stock" class="text-reset">
+              Stock <i class="bi bi-arrow-down-up ms-1" style="font-size:.7rem;"></i>
+            </a>
+          </th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for p in products %}
+        <tr>
+          <td>
+            <div class="product-cell">
+              {% if p.primary_image %}
+                <img src="{{ p.primary_image.image.url }}" alt="{{ p.name }}" class="product-thumb-img">
+              {% else %}
+                <div class="product-thumb"><i class="bi bi-box-seam"></i></div>
+              {% endif %}
+              <div>
+                <a href="{% url 'products:detail' p.pk %}" class="product-name">{{ p.name }}</a>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="cat-pill {{ p.category.name|lower }}">{{ p.category.name }}</span>
+          </td>
+          <td>
+            <span class="quick-price-display fw-bold" id="price-{{ p.pk }}">Rs. {{ p.selling_price }}</span>
+            <button class="btn btn-sm btn-link p-0 ms-1" title="Quick edit price" data-bs-toggle="modal" data-bs-target="#priceModal"
+                    onclick="openPriceModal('{{ p.pk }}', '{{ p.cost_price }}', '{{ p.selling_price }}', '{{ p.name|escapejs }}')">
+              <i class="bi bi-pencil-square" style="color:var(--text-muted);"></i>
+            </button>
+          </td>
+          <td>
+            <span class="fw-semibold">{{ p.quantity_in_stock }}</span> {{ p.get_unit_display }}
+            {% if p.is_low_stock %}<span class="pill pill-danger ms-1">Low</span>{% endif %}
+          </td>
+          <td>
+            {% if p.status == 'active' %}
+              <span class="status-pill completed">Active</span>
+            {% else %}
+              <span class="pill pill-muted">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a href="{% url 'products:edit' p.pk %}" class="btn btn-sm btn-outline-brand" title="Edit"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'products:delete' p.pk %}" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination pagination-sm justify-content-center">
+        {% for page_num in paginator.page_range %}
+          <li class="page-item {% if page_num == page_obj.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ page_num }}&q={{ request.GET.q|default:'' }}&category={{ request.GET.category|default:'' }}&supplier={{ request.GET.supplier|default:'' }}&stock={{ request.GET.stock|default:'' }}">{{ page_num }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-box-seam"></i>
+      <h5 class="mt-2" style="font-weight:700; color:var(--text-main);">No products found</h5>
+      <p class="text-muted" style="font-size:.88rem;">Try adjusting your search filters or add a new product to your inventory.</p>
+      <a href="{% url 'products:add' %}" class="btn btn-brand mt-2"><i class="bi bi-plus-lg me-1"></i>Add New Product</a>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Quick price edit modal -->
+<div class="modal fade" id="priceModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="priceModalTitle" style="font-weight:700;">Update Price</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Cost Price (Rs.)</label>
+          <input type="number" step="0.01" id="pm-cost" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Selling Price (Rs.)</label>
+          <input type="number" step="0.01" id="pm-selling" class="form-control">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-brand" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-brand" onclick="submitPriceUpdate()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentProductId = null;
+function openPriceModal(pk, cost, selling, name) {
+  currentProductId = pk;
+  document.getElementById('priceModalTitle').innerText = 'Update price — ' + name;
+  document.getElementById('pm-cost').value = cost;
+  document.getElementById('pm-selling').value = selling;
+}
+
+function submitPriceUpdate() {
+  fetch(`/products/${currentProductId}/quick-price/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': document.cookie.split('csrftoken=')[1]?.split(';')[0],
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `cost_price=${document.getElementById('pm-cost').value}&selling_price=${document.getElementById('pm-selling').value}`,
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById('price-' + currentProductId).innerText = 'Rs. ' + data.selling_price;
+      bootstrap.Modal.getInstance(document.getElementById('priceModal')).hide();
+    }
+  });
+}
+</script>
+{% endblock %}

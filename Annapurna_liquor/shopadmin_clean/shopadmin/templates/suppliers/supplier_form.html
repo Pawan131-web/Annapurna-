@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Supplier{% endblock %}
+{% block page_title %}{% if object %}Edit{% else %}Add{% endif %} Supplier{% endblock %}
+{% block content %}
+<div class="section-card" style="max-width:600px;">
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-brand">Save Supplier</button>
+    <a href="{% url 'suppliers:list' %}" class="btn btn-outline-brand">Cancel</a>
+  </form>
+</div>
+{% endblock %}

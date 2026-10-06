@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block content %}
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <form class="d-flex gap-2" method="get">
+      <div class="position-relative" style="width:240px;">
+        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control ps-4" placeholder="Search categories">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted" style="font-size:.85rem;"></i>
+      </div>
+      <button class="btn btn-outline-brand" type="submit" title="Search"><i class="bi bi-search"></i></button>
+      {% if request.GET.q %}
+        <a href="{% url 'categories:list' %}" class="btn btn-outline-brand" title="Clear Search"><i class="bi bi-x-lg"></i></a>
+      {% endif %}
+    </form>
+    <a href="{% url 'categories:add' %}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>Add Category</a>
+  </div>
+
+  {% if categories %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Parent Category</th>
+          <th>Description</th>
+          <th>Products</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for c in categories %}
+        <tr>
+          <td>
+            <a href="{% url 'categories:detail' c.pk %}" class="product-name fw-bold">{{ c.name }}</a>
+            {% if c.subcategories.exists %}
+              <div style="font-size:.72rem; color:var(--accent); font-weight:600;">{{ c.subcategories.count }} subcategories</div>
+            {% endif %}
+          </td>
+          <td>
+            {% if c.parent %}
+              <span class="badge bg-light text-dark border"><i class="bi bi-diagram-2 me-1"></i>{{ c.parent.name }}</span>
+            {% else %}
+              <span class="text-muted" style="font-size:.82rem;">Main Category</span>
+            {% endif %}
+          </td>
+          <td class="text-muted" style="font-size:.85rem;">{{ c.description|truncatechars:50|default:"—" }}</td>
+          <td style="font-weight: 600;">{{ c.product_count }}</td>
+          <td>
+            {% if c.is_active %}
+              <span class="status-pill completed">Active</span>
+            {% else %}
+              <span class="status-pill pending">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a href="{% url 'categories:edit' c.pk %}" class="btn btn-sm btn-outline-brand me-1" title="Edit Category"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'categories:delete' c.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Category"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination pagination-sm justify-content-center">
+        {% for p in paginator.page_range %}
+          <li class="page-item {% if p == page_obj.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-tags"></i>
+      <h5 class="mt-2" style="font-weight:700; color:var(--text-main);">No categories yet</h5>
+      <p class="text-muted" style="font-size:.88rem;">Add your first category or drink subcategory.</p>
+      <a href="{% url 'categories:add' %}" class="btn btn-brand mt-2"><i class="bi bi-plus-lg me-1"></i>Add Category</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

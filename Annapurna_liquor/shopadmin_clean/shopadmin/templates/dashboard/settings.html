@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}System & Store Settings{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <!-- Left Column: Store Details & General Preferences -->
+  <div class="col-lg-7">
+    <!-- Store Profile Card -->
+    <div class="section-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width:36px; height:36px; border-radius:8px; background: rgba(0, 176, 144, 0.12); color: var(--brand); display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+            <i class="bi bi-shop"></i>
+          </div>
+          <div>
+            <h6 class="fw-bold mb-0">Store Information</h6>
+            <span class="text-muted" style="font-size:0.8rem;">Official Annapurna storefront profile & public metadata</span>
+          </div>
+        </div>
+        <a href="{{ frontend_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-brand" style="font-size:0.8rem;">
+          <i class="bi bi-box-arrow-up-right me-1"></i>View Storefront
+        </a>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Store Name</label>
+          <input type="text" class="form-control" value="{{ store_name }}" readonly style="background: var(--bg-hover, #F8FAFC); font-weight:600;">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Default Currency</label>
+          <input type="text" class="form-control" value="{{ currency }}" readonly style="background: var(--bg-hover, #F8FAFC); font-weight:600;">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Support Email</label>
+          <input type="text" class="form-control" value="{{ store_email }}" readonly style="background: var(--bg-hover, #F8FAFC);">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Contact Phone / WhatsApp</label>
+          <input type="text" class="form-control" value="{{ store_phone }}" readonly style="background: var(--bg-hover, #F8FAFC);">
+        </div>
+
+        <div class="col-12">
+          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Operating Timezone</label>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-light text-dark border p-2"><i class="bi bi-clock me-1 text-muted"></i>{{ timezone }}</span>
+            <span class="text-muted" style="font-size:0.8rem;">All sales and inventory logs match Nepal Standard Time (UTC+05:45).</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Account Profile Card -->
+    <div class="section-card">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <div style="width:36px; height:36px; border-radius:8px; background: rgba(59, 130, 246, 0.12); color: #3B82F6; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+          <i class="bi bi-person-badge"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">Your Account Details</h6>
+          <span class="text-muted" style="font-size:0.8rem;">Manage your administrator contact profile</span>
+        </div>
+      </div>
+
+      <form method="post" action="{% url 'dashboard:profile_update' %}">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" style="font-size:0.82rem;">First Name</label>
+            <input type="text" name="first_name" class="form-control" value="{{ request.user.first_name }}" placeholder="First Name">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" style="font-size:0.82rem;">Last Name</label>
+            <input type="text" name="last_name" class="form-control" value="{{ request.user.last_name }}" placeholder="Last Name">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" style="font-size:0.82rem;">Email Address</label>
+            <input type="email" name="email" class="form-control" value="{{ request.user.email }}" placeholder="admin@annapurnastore.com">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" style="font-size:0.82rem;">Phone Number</label>
+            <input type="text" name="phone" class="form-control" value="{{ request.user.profile.phone|default:'' }}" placeholder="+977 9800000000">
+          </div>
+          <div class="col-12 text-end">
+            <button type="submit" class="btn btn-brand">Save Account Details</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Column: Security & System Diagnostics -->
+  <div class="col-lg-5">
+    <!-- Change Password Card -->
+    <div class="section-card mb-4">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <div style="width:36px; height:36px; border-radius:8px; background: rgba(229, 193, 88, 0.15); color: #B8860B; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+          <i class="bi bi-shield-lock"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">Security & Password</h6>
+          <span class="text-muted" style="font-size:0.8rem;">Change your dashboard administrator password</span>
+        </div>
+      </div>
+
+      <form method="post" action="{% url 'dashboard:change_password' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:0.82rem;">Current Password <span class="text-danger">*</span></label>
+          <input type="password" name="old_password" class="form-control" placeholder="Enter current password" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:0.82rem;">New Password <span class="text-danger">*</span></label>
+          <input type="password" name="new_password" class="form-control" placeholder="Minimum 6 characters" required minlength="6">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:0.82rem;">Confirm New Password <span class="text-danger">*</span></label>
+          <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter new password" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-brand w-100">Update Password</button>
+      </form>
+    </div>
+
+    <!-- System Diagnostics Card -->
+    <div class="section-card">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <div style="width:36px; height:36px; border-radius:8px; background: rgba(100, 116, 139, 0.12); color: #64748B; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+          <i class="bi bi-cpu"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">System Environment</h6>
+          <span class="text-muted" style="font-size:0.8rem;">Core platform versions & server statistics</span>
+        </div>
+      </div>
+
+      <ul class="list-group list-group-flush" style="font-size:0.85rem;">
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+          <span class="text-muted">Python Version</span>
+          <span class="fw-bold">{{ python_version }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+          <span class="text-muted">Django Framework</span>
+          <span class="fw-bold">v{{ django_version }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+          <span class="text-muted">Database Engine</span>
+          <span class="badge bg-secondary-subtle text-secondary">{{ db_engine|upper }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+          <span class="text-muted">Catalog Products</span>
+          <span class="fw-bold">{{ total_products }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+          <span class="text-muted">Completed Sales</span>
+          <span class="fw-bold">{{ total_sales }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

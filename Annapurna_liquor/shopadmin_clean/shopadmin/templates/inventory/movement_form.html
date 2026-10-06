@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Record Stock Movement{% endblock %}
+{% block page_title %}Record Stock Movement{% endblock %}
+{% block content %}
+<div class="section-card" style="max-width:560px;">
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-brand">Save Movement</button>
+    <a href="{% url 'inventory:list' %}" class="btn btn-outline-brand">Cancel</a>
+  </form>
+</div>
+{% endblock %}

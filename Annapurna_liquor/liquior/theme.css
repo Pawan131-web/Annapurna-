@@ -1,0 +1,1091 @@
+/* ===================================================================
+   ANNAPURNA - SMOOTH THEME TRANSITION & OBSIDIAN DARK MODE PALETTE
+   Default: Light Mode (as currently styled)
+   Active Dark Mode: .dark-theme / [data-theme="dark"]
+   =================================================================== */
+
+/* Global Canvas & Overscroll Rules */
+html {
+    background-color: var(--bg-footer, #121518);
+    overscroll-behavior-y: none;
+}
+
+body {
+    overscroll-behavior-y: none;
+}
+
+/* Smooth Transition across surfaces */
+body,
+header,
+footer,
+main,
+section,
+aside,
+nav,
+div,
+.product-card,
+.blueprint-card,
+.about-img-card,
+.about-why-editorial,
+.about-why-text-side,
+.contact-card,
+.info-card,
+.filter-sidebar,
+.catalog-sort-bar,
+.filter-select,
+.sort-select,
+.grid-view-toggle,
+.cat-tab,
+.category-subnav,
+.cart-drawer-panel,
+.cart-drawer-item,
+.cart-drawer-item-row,
+.cart-item-stepper,
+.checkout-modal-card,
+.checkout-summary-box,
+.auth-modal-card,
+.blueprint-hero-canvas,
+.blueprint-thumb-card,
+.blueprint-spec-card,
+.blueprint-qty-box {
+    transition: background-color 0.3s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Base Classes for Cart Item */
+.cart-drawer-item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cart-item-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #121518;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.cart-item-price {
+    font-size: 13px;
+    color: #D4A359;
+    font-weight: 700;
+}
+
+.cart-item-stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #FAF6ED;
+    border: 1px solid #E8E0CE;
+    border-radius: 6px;
+    padding: 3px 6px;
+}
+
+.cart-qty-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    color: #121518;
+    padding: 2px 6px;
+}
+
+.cart-qty-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #121518;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* ===================================================================
+   GLOBAL & SECTION BACKGROUNDS IN DARK MODE
+   =================================================================== */
+body.dark-theme,
+html.dark-theme {
+    background-color: #0B0D11 !important;
+    color: #EDEDED !important;
+}
+
+body.dark-theme main,
+body.dark-theme section,
+body.dark-theme .bestsellers-section,
+body.dark-theme .classics-section,
+body.dark-theme .groceries-products-section,
+body.dark-theme .drinks-products-section,
+body.dark-theme .catalog-section,
+body.dark-theme .catalog-main,
+body.dark-theme .catalog-layout,
+body.dark-theme .pdp-page-wrapper,
+body.dark-theme .info-cards-section {
+    background-color: #0B0D11 !important;
+    color: #EDEDED !important;
+}
+
+body.dark-theme .about-us-section {
+    background-color: #0F1217 !important;
+}
+
+body.dark-theme .contact-section {
+    background: linear-gradient(180deg, #0B0D11 0%, #12151B 100%) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ===================================================================
+   CATALOG PAGES (liquior.html & grocries.html) IN DARK MODE
+   =================================================================== */
+body.dark-theme .filter-sidebar {
+    background-color: #12151B !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-theme .sidebar-header {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .sidebar-title,
+body.dark-theme .filter-group-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .filter-select-wrapper .filter-select {
+    background-color: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .filter-select option {
+    background-color: #1A1E26 !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .price-slider-container {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+body.dark-theme .price-range-values {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .price-highlight-badge {
+    background: rgba(212, 163, 89, 0.16) !important;
+    color: var(--color-gold-bright) !important;
+    border: 1px solid rgba(212, 163, 89, 0.35) !important;
+    border-radius: 6px;
+    padding: 2px 8px;
+}
+
+body.dark-theme .price-drag-hint {
+    color: #8C93A0 !important;
+}
+
+body.dark-theme .price-slider-input {
+    accent-color: var(--color-champagne-gold);
+}
+
+body.dark-theme .reset-filter-btn {
+    background: rgba(212, 163, 89, 0.12) !important;
+    color: var(--color-gold-bright) !important;
+    border: 1px solid rgba(212, 163, 89, 0.3) !important;
+    border-radius: 6px;
+    padding: 4px 10px;
+}
+
+body.dark-theme .catalog-sort-bar {
+    background: #12151B !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-theme .sort-label,
+body.dark-theme .results-count {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .sort-select {
+    background-color: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .sort-select option {
+    background-color: #1A1E26 !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .grid-view-toggle {
+    background: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-theme .view-btn {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .view-btn.active,
+body.dark-theme .view-btn:hover {
+    background: var(--color-champagne-gold) !important;
+    color: #121518 !important;
+}
+
+body.dark-theme .catalog-pagination {
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .page-number-btn {
+    background: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .page-number-btn.active {
+    background: var(--color-champagne-gold) !important;
+    color: #121518 !important;
+    border-color: var(--color-champagne-gold) !important;
+}
+
+body.dark-theme .active-filter-tag {
+    background: #1A1E26 !important;
+    border-color: rgba(212, 163, 89, 0.4) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .category-subnav {
+    background-color: rgba(13, 15, 19, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .cat-tab {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .cat-tab:hover {
+    color: var(--color-gold-bright) !important;
+    background: rgba(212, 163, 89, 0.12) !important;
+}
+
+body.dark-theme .cat-tab.active {
+    background: linear-gradient(135deg, #E5C158 0%, #D4A359 100%) !important;
+    color: #121518 !important;
+}
+
+/* ===================================================================
+   PRODUCT DETAIL & CATALOG CONTRAST SYSTEM (LIGHT & DARK MODES)
+   =================================================================== */
+
+/* 1. Light Mode (Default) Typography & Product Detail Styling */
+.blueprint-title-serif,
+#pdpTitle {
+    color: #121518 !important;
+}
+
+.blueprint-description,
+#pdpShortDesc {
+    color: #374151 !important;
+}
+
+.pdp-size-label {
+    color: #92400E !important;
+}
+
+.pdp-selected-size-text {
+    color: #111827 !important;
+}
+
+.blueprint-price-main,
+#pdpPrice {
+    color: #121518 !important;
+}
+
+.blueprint-qty-box {
+    background: #FFFFFF !important;
+    border: 1.5px solid #D1D5DB !important;
+    color: #121518 !important;
+}
+
+.blueprint-qty-btn,
+.blueprint-qty-val {
+    color: #121518 !important;
+}
+
+.blueprint-related-title {
+    color: #121518 !important;
+}
+
+.blueprint-view-all {
+    color: #92400E !important;
+}
+.blueprint-view-all:hover {
+    color: #78350F !important;
+}
+
+/* Product Cards in Catalogs & PDP Related Items */
+.product-name,
+.blueprint-card-title {
+    color: #121518 !important;
+}
+
+.product-price,
+.blueprint-card-price {
+    color: #B8860B !important;
+}
+
+.product-size-badge {
+    background: #FEF3C7 !important;
+    border: 1px solid #FCD34D !important;
+    color: #92400E !important;
+}
+
+.product-card {
+    background: #FFFFFF !important;
+    border-color: rgba(18, 21, 24, 0.08) !important;
+}
+
+.blueprint-card {
+    background: #FFFFFF !important;
+    border-color: rgba(18, 21, 24, 0.08) !important;
+}
+
+.blueprint-card-img-wrapper {
+    background-color: #FAF6ED !important;
+}
+
+/* 2. Dark Mode Overrides (body.dark-theme) */
+body.dark-theme .blueprint-hero-canvas {
+    background-color: #14171E !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark-theme .blueprint-thumb-card {
+    background-color: #14171E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .blueprint-thumb-card.active {
+    border-color: var(--color-gold-bright) !important;
+    box-shadow: 0 0 14px var(--color-gold-glow) !important;
+}
+
+body.dark-theme .blueprint-carousel-arrow {
+    background: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-spec-card {
+    background: #14171E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .spec-label {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .spec-value {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-qty-box {
+    background: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-qty-btn {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-qty-val {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-price-main,
+body.dark-theme #pdpPrice {
+    color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .blueprint-title-serif,
+body.dark-theme #pdpTitle {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-description,
+body.dark-theme #pdpShortDesc {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .pdp-size-label {
+    color: #D4A359 !important;
+}
+
+body.dark-theme .pdp-selected-size-text {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-related-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .blueprint-view-all {
+    color: #E5C158 !important;
+}
+
+body.dark-theme .blueprint-tab-btn {
+    color: #A4ABB7 !important;
+    border-bottom-color: transparent !important;
+}
+
+body.dark-theme .blueprint-tab-btn.active {
+    color: var(--color-gold-bright) !important;
+    border-bottom-color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .curated-story-p,
+body.dark-theme .blueprint-detail-tab-content {
+    color: #EDEDED !important;
+}
+
+body.dark-theme .delivery-promise-card {
+    background: #14171E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #EDEDED !important;
+}
+
+body.dark-theme .classic-card {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ===================================================================
+   HEADINGS & TEXT COLORS IN DARK MODE
+   =================================================================== */
+body.dark-theme .bestsellers-title,
+body.dark-theme .classics-title,
+body.dark-theme .groceries-products-title,
+body.dark-theme .drinks-products-title,
+body.dark-theme .about-main-title,
+body.dark-theme .about-img-title,
+body.dark-theme .about-why-main-heading,
+body.dark-theme .why-feature-title,
+body.dark-theme .contact-title,
+body.dark-theme .info-card-title,
+body.dark-theme .pdp-main-title,
+body.dark-theme .catalog-main-title,
+body.dark-theme .catalog-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .bestsellers-subtitle,
+body.dark-theme .classics-subtitle,
+body.dark-theme .groceries-products-subtitle,
+body.dark-theme .drinks-products-subtitle,
+body.dark-theme .about-main-subtitle,
+body.dark-theme .about-img-text,
+body.dark-theme .about-why-paragraph,
+body.dark-theme .why-feature-info,
+body.dark-theme .contact-subtitle,
+body.dark-theme .info-card-text,
+body.dark-theme .catalog-subtitle {
+    color: #A4ABB7 !important;
+}
+
+/* ===================================================================
+   PRODUCT CARDS ACROSS ALL PAGES IN DARK MODE
+   =================================================================== */
+body.dark-theme .product-card,
+body.dark-theme .blueprint-card {
+    background: #14171E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-theme .product-card:hover,
+body.dark-theme .blueprint-card:hover {
+    background: #1A1E26 !important;
+    border-color: var(--color-champagne-gold) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 18px rgba(212, 163, 89, 0.22) !important;
+}
+
+body.dark-theme .product-img-wrapper,
+body.dark-theme .blueprint-card-img-wrapper {
+    background-color: #1A1E26 !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.dark-theme .product-name,
+body.dark-theme .blueprint-card-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .product-price,
+body.dark-theme .blueprint-card-price {
+    color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .product-size-badge {
+    background: rgba(18, 21, 24, 0.85) !important;
+    border-color: rgba(212, 163, 89, 0.4) !important;
+    color: #E5C158 !important;
+}
+
+body.dark-theme .product-footer,
+body.dark-theme .blueprint-card-footer {
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .product-add-btn,
+body.dark-theme .blueprint-card-plus {
+    background: #232833 !important;
+    border-color: #2F3644 !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .product-add-btn:hover,
+body.dark-theme .blueprint-card-plus:hover {
+    background: var(--color-champagne-gold) !important;
+    border-color: var(--color-champagne-gold) !important;
+    color: #121518 !important;
+}
+
+/* ===================================================================
+   HOME ABOUT & CONTACT SURFACES IN DARK MODE
+   =================================================================== */
+body.dark-theme .about-img-card,
+body.dark-theme .about-why-editorial,
+body.dark-theme .contact-card,
+body.dark-theme .info-card {
+    background: #14171E !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.dark-theme .about-why-text-side {
+    background: #14171E !important;
+}
+
+body.dark-theme .why-feature-icon {
+    background: #262115 !important;
+    color: #D4A359 !important;
+}
+
+body.dark-theme .bestseller-rotation-badge {
+    background: rgba(212, 163, 89, 0.14) !important;
+    border-color: rgba(212, 163, 89, 0.35) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .small-view-all-link {
+    background: #181C24 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .small-view-all-link:hover {
+    border-color: var(--color-champagne-gold) !important;
+    background: #202530 !important;
+    color: var(--color-gold-bright) !important;
+}
+
+/* ===================================================================
+   SEARCH DROPDOWN, CART DRAWER & CHECKOUT MODAL IN DARK MODE
+   =================================================================== */
+body.dark-theme .search-results-dropdown {
+    background: #14171E !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.dark-theme .search-result-item:hover {
+    background: #1C212B !important;
+}
+
+body.dark-theme .search-result-title {
+    color: #FAFAF7 !important;
+}
+
+/* Cart Drawer in Dark Mode */
+body.dark-theme .cart-drawer-panel {
+    background: #12151C !important;
+    color: #FAFAF7 !important;
+    border-left-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .cart-drawer-header {
+    background: #14171E !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .cart-drawer-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-drawer-close {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-drawer-close:hover {
+    background: #252A36 !important;
+    color: var(--color-gold-bright) !important;
+    border-color: var(--color-champagne-gold) !important;
+}
+
+body.dark-theme .cart-drawer-item-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .cart-item-name {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-item-price {
+    color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .cart-item-stepper {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+body.dark-theme .cart-qty-btn {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-qty-val {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-empty-state h4 {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-empty-state p {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .cart-drawer-footer {
+    background: #12151C !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .cart-drawer-total-row {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .cart-drawer-total-price {
+    color: var(--color-gold-bright) !important;
+}
+
+/* Policy Accordion in Dark Mode */
+body.dark-theme .policy-accordion-item {
+    background: #14171E !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .policy-accordion-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .policy-accordion-text {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .policy-badge {
+    background: rgba(212, 163, 89, 0.15) !important;
+    color: var(--color-gold-bright) !important;
+    border: 1px solid rgba(212, 163, 89, 0.35) !important;
+}
+
+/* Contact Us Boxes in Dark Mode */
+body.dark-theme .contact-item-box,
+body.dark-theme .contact-hours-box {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .contact-label,
+body.dark-theme .contact-hours-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .contact-value {
+    color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .contact-hours-text {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .contact-action-btn {
+    background: #232833 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .contact-action-btn:hover {
+    background: var(--color-champagne-gold) !important;
+    color: #121518 !important;
+}
+
+/* Auth Modal in Dark Mode */
+body.dark-theme .auth-modal-container {
+    background: #14171E !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .auth-modal-close {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-modal-card,
+body.dark-theme .auth-modal-card {
+    background: #14171E !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAF7 !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(212, 163, 89, 0.15) !important;
+}
+
+body.dark-theme .checkout-modal-title,
+body.dark-theme .auth-title {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-modal-sub,
+body.dark-theme .auth-subtitle {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .checkout-modal-close,
+body.dark-theme .checkout-close-btn {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-modal-close:hover,
+body.dark-theme .checkout-close-btn:hover {
+    background: #262C38 !important;
+    color: var(--color-gold-bright) !important;
+    border-color: var(--color-champagne-gold) !important;
+}
+
+body.dark-theme .checkout-summary-box {
+    background: #181C24 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .checkout-item-name {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-item-meta {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .unit-price {
+    color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .qty-badge {
+    background: #1A1E26 !important;
+    color: #FAFAF7 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+body.dark-theme .checkout-divider {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-theme .checkout-calc-row {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .checkout-calc-row span:first-child {
+    color: #EDEDED !important;
+}
+
+body.dark-theme .checkout-calc-row span:last-child {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .free-badge {
+    background: rgba(46, 204, 113, 0.18) !important;
+    color: #4EED8C !important;
+    border: 1px solid rgba(46, 204, 113, 0.4) !important;
+}
+
+body.dark-theme .checkout-calc-row.total-row {
+    color: #FAFAF7 !important;
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-theme .checkout-calc-row.total-row span:first-child {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+
+body.dark-theme .checkout-calc-row.total-row .total-amount {
+    color: var(--color-gold-bright) !important;
+    font-weight: 800 !important;
+}
+
+body.dark-theme .checkout-primary-btn {
+    background: linear-gradient(135deg, #E5C158 0%, #D4A359 100%) !important;
+    color: #121518 !important;
+    font-weight: 800 !important;
+    border: none !important;
+    box-shadow: 0 4px 18px rgba(212, 163, 89, 0.35) !important;
+}
+
+body.dark-theme .checkout-primary-btn:hover {
+    background: linear-gradient(135deg, #F0D070 0%, #E5C158 100%) !important;
+    color: #121518 !important;
+    box-shadow: 0 8px 25px rgba(229, 193, 88, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+body.dark-theme .checkout-secondary-btn {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-secondary-btn:hover {
+    background: #252A36 !important;
+    color: var(--color-gold-bright) !important;
+    border-color: var(--color-champagne-gold) !important;
+}
+
+body.dark-theme .checkout-form-label,
+body.dark-theme .checkout-field-label,
+body.dark-theme .auth-label {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-input-field,
+body.dark-theme .checkout-input,
+body.dark-theme .auth-input {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .checkout-input-field::placeholder,
+body.dark-theme .checkout-input::placeholder,
+body.dark-theme .auth-input::placeholder {
+    color: #7A818E !important;
+}
+
+body.dark-theme .delivery-opt-card {
+    background: #1A1E26 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .delivery-opt-card.active {
+    border-color: var(--color-gold-bright) !important;
+    background: rgba(212, 163, 89, 0.15) !important;
+}
+
+body.dark-theme .delivery-opt-name {
+    color: #FAFAF7 !important;
+}
+
+body.dark-theme .delivery-opt-desc {
+    color: #A4ABB7 !important;
+}
+
+body.dark-theme .hero-topic-title.dark-text {
+    color: #FAFAF7 !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.85) !important;
+}
+
+body.dark-theme .hero-info-text.dark-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* ===================================================================
+   RESPONSIVENESS RESETS & VIEWPORT SAFETY GUARDS
+   =================================================================== */
+html {
+    overflow-x: clip;
+    width: 100%;
+    max-width: 100vw;
+}
+
+body {
+    overflow-x: clip;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: 100%;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
+    will-change: transform, opacity;
+    transform: translateY(0);
+}
+
+header.header-hidden {
+    transform: translateY(-100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+img, video, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+}
+
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 12px;
+    }
+}
+
+/* Responsive Cart Drawer & Modals */
+.cart-drawer-panel {
+    max-width: 100vw;
+}
+
+@media (max-width: 480px) {
+    .cart-drawer-panel {
+        width: 100% !important;
+        max-width: 100vw !important;
+    }
+    .fixed-floating-cart-wrapper {
+        bottom: 16px !important;
+        right: 16px !important;
+    }
+    .floating-cart-btn {
+        width: 48px !important;
+        height: 48px !important;
+    }
+}
+
+/* ===================================================================
+   UNIFIED ADMIN ACCESS / PROFILE COMPONENT
+   =================================================================== */
+.user-account-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+/* 1. Logged-Out State: Sleek Profile / Admin Circular Button */
+.admin-signin-btn,
+.user-account-btn:not(.admin-profile-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-header-element, rgba(24, 27, 32, 0.95));
+    border: 1px solid var(--border-header-element, rgba(255, 255, 255, 0.12));
+    color: var(--text-header, #FAFAF7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    padding: 0;
+    position: relative;
+}
+
+.admin-signin-btn:hover,
+.user-account-btn:not(.admin-profile-btn):hover {
+    background-color: var(--bg-header-element-hover, rgba(34, 38, 44, 0.98));
+    border-color: var(--color-gold-bright, #E5C158);
+    color: var(--color-gold-bright, #E5C158);
+    box-shadow: 0 0 14px var(--color-gold-glow, rgba(229, 193, 88, 0.35));
+    transform: translateY(-1px);
+}
+
+.admin-signin-btn:active,
+.user-account-btn:not(.admin-profile-btn):active {
+    transform: translateY(0);
+}
+
+/* When logged in: hide Sign-In button and show Admin Profile button */
+body.is-logged-in .admin-signin-btn,
+body.is-logged-in .user-account-btn:not(.admin-profile-btn) {
+    display: none !important;
+}
+
+/* 2. Logged-In State: Admin Profile Avatar (Direct Link to Dashboard) */
+.admin-profile-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-header-element, rgba(24, 27, 32, 0.95));
+    border: 1.5px solid var(--color-champagne-gold, #F5D77F);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 14px var(--color-gold-glow, rgba(229, 193, 88, 0.35));
+    outline: none;
+    text-decoration: none;
+    padding: 0;
+}
+
+body.is-logged-in .admin-profile-btn {
+    display: inline-flex !important;
+}
+
+body.is-logged-in .admin-profile-btn:hover {
+    border-color: var(--color-gold-bright, #E5C158);
+    background-color: var(--bg-header-element-hover, rgba(34, 38, 44, 0.98));
+    box-shadow: 0 0 20px rgba(229, 193, 88, 0.55);
+    transform: translateY(-1px);
+}
+
+.user-avatar-circle.mini {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E5C158 0%, #D4A359 100%);
+    color: #121518;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(229, 193, 88, 0.4);
+    flex-shrink: 0;
+}
+
+

@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}Inventory Log{% endblock %}
+{% block page_title %}Inventory Log{% endblock %}
+
+{% block content %}
+<!-- Top 3 Stat Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-4">
+    <div class="stat-card-v2">
+      <div class="stat-head">
+        <div class="stat-icon-box teal"><i class="bi bi-box-arrow-in-down"></i></div>
+      </div>
+      <div class="stat-label-text">Total Incoming Stock</div>
+      <div class="stat-main-value text-success">+{{ total_incoming_qty }}</div>
+      <div class="stat-footer-trend"><span class="trend-up"><i class="bi bi-arrow-up-right"></i> Received Items</span></div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="stat-card-v2">
+      <div class="stat-head">
+        <div class="stat-icon-box orange"><i class="bi bi-box-arrow-up"></i></div>
+      </div>
+      <div class="stat-label-text">Total Outgoing Stock</div>
+      <div class="stat-main-value text-danger">-{{ total_outgoing_qty }}</div>
+      <div class="stat-footer-trend"><span class="trend-down"><i class="bi bi-arrow-down-right"></i> Dispatched & Sold</span></div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="stat-card-v2">
+      <div class="stat-head">
+        <div class="stat-icon-box blue"><i class="bi bi-boxes"></i></div>
+      </div>
+      <div class="stat-label-text">Total Inventory Units</div>
+      <div class="stat-main-value">{{ total_inventory_units }}</div>
+      <div class="stat-footer-trend"><span class="trend-up"><i class="bi bi-check-circle"></i> Active Stock On Hand</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h3 class="section-title mb-0">Inventory & Stock Management</h3>
+    <div class="d-flex gap-2">
+      <a href="{% url 'inventory:receive' %}" class="btn btn-brand" style="background:#00B090; border-color:#00B090;">
+        <i class="bi bi-plus-lg me-1"></i>Receive Incoming Stock
+      </a>
+      <a href="{% url 'inventory:add' %}" class="btn btn-outline-brand">
+        <i class="bi bi-arrow-left-right me-1"></i>Record Adjustment
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-4" id="inventoryTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active fw-semibold" id="incoming-tab" data-bs-toggle="tab" data-bs-target="#incoming-pane" type="button" role="tab">
+        <i class="bi bi-box-arrow-in-down text-success me-1"></i>Incoming Stocks (Stock In)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link fw-semibold" id="outgoing-tab" data-bs-toggle="tab" data-bs-target="#outgoing-pane" type="button" role="tab">
+        <i class="bi bi-box-arrow-up text-danger me-1"></i>Outgoing Stocks (Stock Out)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link fw-semibold" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-pane" type="button" role="tab">
+        <i class="bi bi-clock-history me-1"></i>All Movements Log
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Contents -->
+  <div class="tab-content" id="inventoryTabsContent">
+    <!-- Incoming Stocks Pane -->
+    <div class="tab-pane fade show active" id="incoming-pane" role="tabpanel">
+      {% if incoming_movements %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Reason</th>
+              <th>Qty Received</th>
+              <th>Stock (Before → After)</th>
+              <th>Reference / Note</th>
+              <th>Recorded By</th>
+              <th>Date</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for m in incoming_movements %}
+            <tr>
+              <td>
+                <div class="product-cell">
+                  {% if m.product.primary_image %}
+                    <img src="{{ m.product.primary_image.image.url }}" alt="{{ m.product.name }}" class="product-thumb-img">
+                  {% else %}
+                    <div class="product-thumb"><i class="bi bi-box-seam"></i></div>
+                  {% endif %}
+                  <div>
+                    <a href="{% url 'products:detail' m.product.pk %}" class="product-name fw-bold">{{ m.product.name }}</a>
+                  </div>
+                </div>
+              </td>
+              <td><span class="status-pill completed"><i class="bi bi-arrow-down-left me-1"></i>{{ m.get_reason_display }}</span></td>
+              <td class="fw-bold text-success">+{{ m.quantity }}</td>
+              <td class="mono" style="font-size:.82rem; color:var(--text-muted);">{{ m.quantity_before }} → {{ m.quantity_after }}</td>
+              <td class="text-muted" style="font-size:.85rem;">{{ m.note|default:"Standard Restock" }}</td>
+              <td>{{ m.created_by.username|default:"Admin"|capfirst }}</td>
+              <td style="font-size:.82rem; color:var(--text-muted);">{{ m.created_at|date:"M d, Y H:i" }}</td>
+              <td class="text-end">
+                <a href="{% url 'inventory:delete' m.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Entry"><i class="bi bi-trash"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty-state py-4">
+          <i class="bi bi-box-arrow-in-down text-success"></i>
+          <h5 class="mt-2" style="font-weight:700;">No incoming stock entries yet</h5>
+          <p class="text-muted" style="font-size:.88rem;">Click below to record incoming shipments from suppliers.</p>
+          <a href="{% url 'inventory:receive' %}" class="btn btn-brand mt-2" style="background:#00B090; border-color:#00B090;">
+            <i class="bi bi-plus-lg me-1"></i>Receive Incoming Stock
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Outgoing Stocks Pane -->
+    <div class="tab-pane fade" id="outgoing-pane" role="tabpanel">
+      {% if outgoing_movements %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Reason</th>
+              <th>Qty Dispatched</th>
+              <th>Stock (Before → After)</th>
+              <th>Reference / Note</th>
+              <th>Recorded By</th>
+              <th>Date</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for m in outgoing_movements %}
+            <tr>
+              <td>
+                <div class="product-cell">
+                  {% if m.product.primary_image %}
+                    <img src="{{ m.product.primary_image.image.url }}" alt="{{ m.product.name }}" class="product-thumb-img">
+                  {% else %}
+                    <div class="product-thumb"><i class="bi bi-box-seam"></i></div>
+                  {% endif %}
+                  <div>
+                    <a href="{% url 'products:detail' m.product.pk %}" class="product-name fw-bold">{{ m.product.name }}</a>
+                  </div>
+                </div>
+              </td>
+              <td><span class="cat-pill beverages"><i class="bi bi-arrow-up-right me-1"></i>{{ m.get_reason_display }}</span></td>
+              <td class="fw-bold text-danger">-{{ m.quantity }}</td>
+              <td class="mono" style="font-size:.82rem; color:var(--text-muted);">{{ m.quantity_before }} → {{ m.quantity_after }}</td>
+              <td class="text-muted" style="font-size:.85rem;">{{ m.note|default:"—" }}</td>
+              <td>{{ m.created_by.username|default:"Admin"|capfirst }}</td>
+              <td style="font-size:.82rem; color:var(--text-muted);">{{ m.created_at|date:"M d, Y H:i" }}</td>
+              <td class="text-end">
+                <a href="{% url 'inventory:delete' m.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Entry"><i class="bi bi-trash"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty-state py-4">
+          <i class="bi bi-box-arrow-up text-danger"></i>
+          <h5 class="mt-2" style="font-weight:700;">No outgoing stock entries yet</h5>
+          <p class="text-muted" style="font-size:.88rem;">Dispatches and sales will automatically log here.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- All Movements Log Pane -->
+    <div class="tab-pane fade" id="all-pane" role="tabpanel">
+      {% if movements %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Reason</th>
+              <th>Qty</th>
+              <th>Before → After</th>
+              <th>Recorded By</th>
+              <th>Date</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for m in movements %}
+            <tr>
+              <td>
+                <div class="product-cell">
+                  {% if m.product.primary_image %}
+                    <img src="{{ m.product.primary_image.image.url }}" alt="{{ m.product.name }}" class="product-thumb-img">
+                  {% else %}
+                    <div class="product-thumb"><i class="bi bi-box-seam"></i></div>
+                  {% endif %}
+                  <div>
+                    <a href="{% url 'products:detail' m.product.pk %}" class="product-name fw-bold">{{ m.product.name }}</a>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if m.direction == 'in' %}
+                  <span class="status-pill completed">Stock In</span>
+                {% else %}
+                  <span class="cat-pill beverages">Stock Out</span>
+                {% endif %}
+              </td>
+              <td>{{ m.get_reason_display }}</td>
+              <td style="font-weight: 700;">{{ m.quantity }}</td>
+              <td class="mono" style="font-size:.82rem; color:var(--text-muted);">{{ m.quantity_before }} → {{ m.quantity_after }}</td>
+              <td>{{ m.created_by.username|default:"Admin"|capfirst }}</td>
+              <td style="font-size:.82rem; color:var(--text-muted);">{{ m.created_at|date:"M d, Y H:i" }}</td>
+              <td class="text-end">
+                <a href="{% url 'inventory:delete' m.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Movement Entry"><i class="bi bi-trash"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty-state">
+          <i class="bi bi-arrow-left-right"></i>
+          <h5 class="mt-2" style="font-weight:700;">No stock movements recorded yet</h5>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Sales Report{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+{% include "reports/_nav.html" with active="sales" %}
+<div class="section-card">
+  <form class="d-flex gap-2 flex-wrap mb-3" method="get">
+    <input type="date" name="from" value="{{ date_from }}" class="form-control" style="width:170px;">
+    <input type="date" name="to" value="{{ date_to }}" class="form-control" style="width:170px;">
+    <button class="btn btn-outline-brand" type="submit">Filter</button>
+    <a class="btn btn-outline-brand" href="?from={{ date_from }}&to={{ date_to }}&export=csv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+    <a class="btn btn-outline-brand" href="?from={{ date_from }}&to={{ date_to }}&export=xlsx"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+  </form>
+
+  <div class="stat-card d-inline-block mb-3" style="--accent-bar:var(--accent);">
+    <div class="stat-label">Total Revenue ({{ date_from }} – {{ date_to }})</div>
+    <div class="stat-value">Rs. {{ total_revenue|floatformat:2 }}</div>
+  </div>
+
+  {% if sales %}
+  <table class="data-table">
+    <thead><tr><th>Invoice</th><th>Customer</th><th>Payment</th><th>Date</th><th class="text-end">Total</th></tr></thead>
+    <tbody>
+    {% for s in sales %}
+      <tr>
+        <td class="mono"><a href="{% url 'sales:receipt' s.pk %}">{{ s.invoice_number }}</a></td>
+        <td>{{ s.customer_name|default:"Walk-in" }}</td>
+        <td>{{ s.get_payment_method_display }}</td>
+        <td>{{ s.sold_at|date:"M d, Y" }}</td>
+        <td class="text-end">Rs. {{ s.total_amount|floatformat:2 }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="empty-state"><i class="bi bi-receipt"></i>No sales in this range.</div>
+  {% endif %}
+</div>
+{% endblock %}

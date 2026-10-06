@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Inventory Report{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block content %}
+{% include "reports/_nav.html" with active="inventory" %}
+
+<div class="section-card">
+  <form class="d-flex gap-2 flex-wrap mb-3" method="get">
+    <label class="d-flex align-items-center gap-2" style="font-size:.85rem;">
+      <input type="checkbox" name="low" value="1" onchange="this.form.submit()" {% if only_low %}checked{% endif %}> Low stock only
+    </label>
+    <a class="btn btn-outline-brand ms-auto" href="?{% if only_low %}low=1&{% endif %}export=csv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+    <a class="btn btn-outline-brand" href="?{% if only_low %}low=1&{% endif %}export=xlsx"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+  </form>
+
+  {% if products %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th class="text-end">Qty in Stock</th>
+          <th class="text-end">Threshold</th>
+          <th class="text-end">Cost Price</th>
+          <th class="text-end">Selling Price</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for p in products %}
+        <tr>
+          <td>
+            <div class="product-cell">
+              {% if p.primary_image %}
+                <img src="{{ p.primary_image.image.url }}" alt="{{ p.name }}" class="product-thumb-img">
+              {% else %}
+                <div class="product-thumb"><i class="bi bi-box-seam"></i></div>
+              {% endif %}
+              <a href="{% url 'products:detail' p.pk %}" class="product-name fw-bold">{{ p.name }}</a>
+            </div>
+          </td>
+          <td><span class="cat-pill {{ p.category.name|lower }}">{{ p.category.display_name }}</span></td>
+          <td class="text-end fw-bold">
+            {{ p.quantity_in_stock }} {% if p.is_low_stock %}<span class="pill pill-danger ms-1">Low</span>{% endif %}
+          </td>
+          <td class="text-end text-muted">{{ p.low_stock_threshold }}</td>
+          <td class="text-end">Rs. {{ p.cost_price }}</td>
+          <td class="text-end fw-bold">Rs. {{ p.selling_price }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="empty-state py-4"><i class="bi bi-box-seam"></i>No products to show.</div>
+  {% endif %}
+</div>
+{% endblock %}
