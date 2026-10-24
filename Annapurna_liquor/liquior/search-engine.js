@@ -164,7 +164,7 @@
             price: "Rs. 650",
             priceRaw: 650,
             rating: "4.9",
-            img: "asstes/website-designs/alcohol design/classics_tobacco.png",
+            img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg",
             brand: "Annapurna Pantry",
             tags: ["nuts", "cashews", "almonds", "dried fruit", "snacks", "pantry", "grocery"]
         },
@@ -242,7 +242,7 @@
             price: "Rs. 520",
             priceRaw: 520,
             rating: "4.9",
-            img: "asstes/website-designs/alcohol design/classics_tobacco.png",
+            img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg",
             brand: "Annapurna Pantry",
             tags: ["nuts", "dried fruit", "cashews", "raisins", "family pack", "pantry", "groceries"]
         },

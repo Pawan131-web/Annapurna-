@@ -68,7 +68,6 @@
             scroll-behavior: smooth;
             scroll-padding-top: 100px;
             background-color: var(--bg-footer, #121518);
-            overscroll-behavior-y: none;
         }
 
         body {
@@ -77,7 +76,6 @@
             background-color: #FFFFFF;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
-            overscroll-behavior-y: none;
         }
 
         a {
@@ -1161,14 +1159,15 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: all 0.35s ease;
+            transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s ease, border-color 0.24s ease;
             position: relative;
             overflow: hidden;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            transform: translateZ(0);
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) translateZ(0);
             border-color: var(--color-champagne-gold);
             box-shadow: 0 14px 30px rgba(0, 0, 0, 0.09), 0 0 16px rgba(212, 163, 89, 0.2);
             background: #FFFFFF;
@@ -3861,42 +3860,43 @@
         }
 
         /* ==========================================
-           SCROLL & LOAD REVEAL ANIMATIONS (HOME ONLY)
+           FAST HARDWARE-ACCELERATED REVEAL ANIMATIONS
            ========================================== */
         .reveal-on-scroll {
             opacity: 0;
-            transform: translateY(26px);
-            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
+            transform: translate3d(0, 14px, 0);
+            transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .reveal-on-scroll.is-revealed {
             opacity: 1 !important;
-            transform: translateY(0) !important;
+            transform: translate3d(0, 0, 0) !important;
         }
 
         .reveal-delay-1 {
-            transition-delay: 0.08s;
+            transition-delay: 0.03s;
         }
 
         .reveal-delay-2 {
-            transition-delay: 0.16s;
+            transition-delay: 0.06s;
         }
 
         .reveal-delay-3 {
-            transition-delay: 0.24s;
+            transition-delay: 0.09s;
         }
 
         .reveal-delay-4 {
-            transition-delay: 0.32s;
+            transition-delay: 0.12s;
         }
 
         .reveal-delay-5 {
-            transition-delay: 0.40s;
+            transition-delay: 0.15s;
         }
 
         .reveal-delay-6 {
-            transition-delay: 0.48s;
+            transition-delay: 0.18s;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -4332,10 +4332,10 @@
                             </div>
 
                             <!-- Product 5B (Dynamic Groceries) -->
-                            <div class="product-card" data-id="302" data-type="grocery" data-name="Artisanal Truffle Gouda Cheese" data-price="1250" data-img="asstes/website-designs/grocries/R.jpg">
+                            <div class="product-card" data-id="302" data-type="grocery" data-name="Artisanal Truffle Gouda Cheese" data-price="1250" data-img="asstes/website-designs/grocries/classics_packaged_foods.jpg">
                                 <div class="product-img-wrapper">
-                                    <img src="asstes/website-designs/grocries/R.jpg"
-                                        alt="Artisanal Truffle Gouda Cheese" />
+                                    <img src="asstes/website-designs/grocries/classics_packaged_foods.jpg"
+                                        alt="Artisanal Truffle Gouda Cheese" loading="lazy" decoding="async" />
                                 </div>
                                 <h3 class="product-name">Artisanal Truffle Gouda Cheese</h3>
                                 <div class="product-footer">
@@ -4351,10 +4351,10 @@
                             </div>
 
                             <!-- Product 6B (Dynamic Groceries) -->
-                            <div class="product-card" data-id="303" data-type="grocery" data-name="Packaged Pantry Spices & Seasoning Set" data-price="850" data-img="asstes/website-designs/grocries/supermarket_cart.jpeg">
+                            <div class="product-card" data-id="303" data-type="grocery" data-name="Packaged Pantry Spices & Seasoning Set" data-price="850" data-img="asstes/website-designs/grocries/classics_rice_grains.jpg">
                                 <div class="product-img-wrapper">
-                                    <img src="asstes/website-designs/grocries/supermarket_cart.jpeg"
-                                        alt="Packaged Pantry Spices & Seasoning Set" />
+                                    <img src="asstes/website-designs/grocries/classics_rice_grains.jpg"
+                                        alt="Packaged Pantry Spices & Seasoning Set" loading="lazy" decoding="async" />
                                 </div>
                                 <h3 class="product-name">Packaged Pantry Spices & Seasoning Set</h3>
                                 <div class="product-footer">
@@ -4580,8 +4580,8 @@
 
                         <!-- Card 1: Rice & Grains -->
                         <div class="classic-card reveal-on-scroll reveal-delay-1">
-                            <img src="asstes/website-designs/grocries/R.jpg" alt="Rice & Grains"
-                                class="classic-card-img" />
+                            <img src="asstes/website-designs/grocries/classics_rice_grains.jpg" alt="Rice & Grains"
+                                class="classic-card-img" loading="lazy" decoding="async" />
                             <div class="classic-card-overlay">
                                 <h3 class="classic-title-text">Rice & Grains</h3>
                             </div>
@@ -4589,8 +4589,8 @@
 
                         <!-- Card 2: Packaged Foods -->
                         <div class="classic-card reveal-on-scroll reveal-delay-2">
-                            <img src="asstes/website-designs/grocries/supermarket_cart.jpeg" alt="Packaged Foods"
-                                class="classic-card-img" />
+                            <img src="asstes/website-designs/grocries/classics_packaged_foods.jpg" alt="Packaged Foods"
+                                class="classic-card-img" loading="lazy" decoding="async" />
                             <div class="classic-card-overlay">
                                 <h3 class="classic-title-text">Packaged Foods</h3>
                             </div>
@@ -4598,8 +4598,8 @@
 
                         <!-- Card 3: Snacks & Confectionery -->
                         <div class="classic-card reveal-on-scroll reveal-delay-3">
-                            <img src="asstes/website-designs/alcohol design/classics_tobacco.png"
-                                alt="Snacks & Confectionery" class="classic-card-img" />
+                            <img src="asstes/website-designs/grocries/classics_snacks_sweets.jpg"
+                                alt="Snacks & Confectionery" class="classic-card-img" loading="lazy" decoding="async" />
                             <div class="classic-card-overlay">
                                 <h3 class="classic-title-text">Snacks & Confectionery</h3>
                             </div>
@@ -4634,10 +4634,10 @@
                 <div class="drinks-products-grid">
 
                     <!-- Product 1 -->
-                    <div class="product-card reveal-on-scroll reveal-delay-1" data-id="105" data-type="grocery" data-name="Premium Himalayan Aged Basmati Rice (5kg)" data-price="1450" data-img="asstes/website-designs/grocries/R.jpg">
+                    <div class="product-card reveal-on-scroll reveal-delay-1" data-id="105" data-type="grocery" data-name="Premium Himalayan Aged Basmati Rice (5kg)" data-price="1450" data-img="asstes/website-designs/grocries/classics_rice_grains.jpg">
                         <div class="product-img-wrapper">
-                            <img src="asstes/website-designs/grocries/R.jpg"
-                                alt="Premium Himalayan Aged Basmati Rice" />
+                            <img src="asstes/website-designs/grocries/classics_rice_grains.jpg"
+                                alt="Premium Himalayan Aged Basmati Rice" loading="lazy" decoding="async" />
                         </div>
                         <h3 class="product-name">Premium Himalayan Aged Basmati Rice (5kg)</h3>
                         <div class="product-footer">
@@ -4653,10 +4653,10 @@
                     </div>
 
                     <!-- Product 2 -->
-                    <div class="product-card reveal-on-scroll reveal-delay-2" data-id="107" data-type="grocery" data-name="Cold Pressed Extra Virgin Mustard Oil (2L)" data-price="780" data-img="asstes/website-designs/grocries/R.jpg">
+                    <div class="product-card reveal-on-scroll reveal-delay-2" data-id="107" data-type="grocery" data-name="Cold Pressed Extra Virgin Mustard Oil (2L)" data-price="780" data-img="asstes/website-designs/grocries/classics_packaged_foods.jpg">
                         <div class="product-img-wrapper">
-                            <img src="asstes/website-designs/grocries/R.jpg"
-                                alt="Cold Pressed Extra Virgin Mustard Oil" />
+                            <img src="asstes/website-designs/grocries/classics_packaged_foods.jpg"
+                                alt="Cold Pressed Extra Virgin Mustard Oil" loading="lazy" decoding="async" />
                         </div>
                         <h3 class="product-name">Cold Pressed Extra Virgin Mustard Oil (2L)</h3>
                         <div class="product-footer">
@@ -4672,10 +4672,10 @@
                     </div>
 
                     <!-- Product 3 -->
-                    <div class="product-card reveal-on-scroll reveal-delay-3" data-id="106" data-type="grocery" data-name="Organic Kashmiri Saffron & Cardamom Pack" data-price="2200" data-img="asstes/website-designs/grocries/supermarket_cart.jpeg">
+                    <div class="product-card reveal-on-scroll reveal-delay-3" data-id="106" data-type="grocery" data-name="Organic Kashmiri Saffron & Cardamom Pack" data-price="2200" data-img="asstes/website-designs/grocries/classics_packaged_foods.jpg">
                         <div class="product-img-wrapper">
-                            <img src="asstes/website-designs/grocries/supermarket_cart.jpeg"
-                                alt="Organic Kashmiri Saffron & Cardamom Pack" />
+                            <img src="asstes/website-designs/grocries/classics_packaged_foods.jpg"
+                                alt="Organic Kashmiri Saffron & Cardamom Pack" loading="lazy" decoding="async" />
                         </div>
                         <h3 class="product-name">Organic Kashmiri Saffron & Cardamom Pack</h3>
                         <div class="product-footer">
@@ -4694,7 +4694,7 @@
                     <div class="product-card reveal-on-scroll reveal-delay-4" data-id="101" data-type="grocery" data-name="Organic Wild Himalayan Honey (500g)" data-price="1850" data-img="asstes/website-designs/grocries/gm-23ed737a-a2a5-4ce4-995e-9426e7bacf3a-groceries.jpeg">
                         <div class="product-img-wrapper">
                             <img src="asstes/website-designs/grocries/gm-23ed737a-a2a5-4ce4-995e-9426e7bacf3a-groceries.jpeg"
-                                alt="Organic Wild Himalayan Honey" />
+                                alt="Organic Wild Himalayan Honey" loading="lazy" decoding="async" />
                         </div>
                         <h3 class="product-name">Organic Wild Himalayan Honey (500g)</h3>
                         <div class="product-footer">
@@ -4710,10 +4710,10 @@
                     </div>
 
                     <!-- Product 5 -->
-                    <div class="product-card reveal-on-scroll reveal-delay-5" data-id="308" data-type="grocery" data-name="Artisanal Truffle Gourmet Bar Snack Mix" data-price="1250" data-img="asstes/website-designs/alcohol design/classics_tobacco.png">
+                    <div class="product-card reveal-on-scroll reveal-delay-5" data-id="308" data-type="grocery" data-name="Artisanal Truffle Gourmet Bar Snack Mix" data-price="1250" data-img="asstes/website-designs/grocries/classics_snacks_sweets.jpg">
                         <div class="product-img-wrapper">
-                            <img src="asstes/website-designs/alcohol design/classics_tobacco.png"
-                                alt="Artisanal Truffle Gourmet Bar Snack Mix" />
+                            <img src="asstes/website-designs/grocries/classics_snacks_sweets.jpg"
+                                alt="Artisanal Truffle Gourmet Bar Snack Mix" loading="lazy" decoding="async" />
                         </div>
                         <h3 class="product-name">Artisanal Truffle Gourmet Bar Snack Mix</h3>
                         <div class="product-footer">
@@ -4730,10 +4730,10 @@
                     </div>
 
                     <!-- Product 6 -->
-                    <div class="product-card reveal-on-scroll reveal-delay-6" data-id="309" data-type="grocery" data-name="Premium Packaged Pantry Essentials Box" data-price="950" data-img="asstes/website-designs/grocries/supermarket_cart.jpeg">
+                    <div class="product-card reveal-on-scroll reveal-delay-6" data-id="309" data-type="grocery" data-name="Premium Packaged Pantry Essentials Box" data-price="950" data-img="asstes/website-designs/grocries/classics_packaged_foods.jpg">
                         <div class="product-img-wrapper">
-                            <img src="asstes/website-designs/grocries/supermarket_cart.jpeg"
-                                alt="Premium Packaged Pantry Essentials Box" />
+                            <img src="asstes/website-designs/grocries/classics_packaged_foods.jpg"
+                                alt="Premium Packaged Pantry Essentials Box" loading="lazy" decoding="async" />
                         </div>
                         <h3 class="product-name">Premium Packaged Pantry Essentials Box</h3>
                         <div class="product-footer">
@@ -5495,10 +5495,31 @@
         });
 
         // Scroll listener for accurate position tracking
+        let isNavScrollPending = false;
+        let cachedNavSections = [];
+
+        function updateCachedNavSections() {
+            const sections = [
+                { id: 'contact', el: document.getElementById('contact') },
+                { id: 'policy', el: document.getElementById('policy') || document.getElementById('policy-contact') },
+                { id: 'about', el: document.getElementById('about') },
+                { id: 'offers', el: document.getElementById('offers') },
+                { id: 'groceries', el: document.getElementById('groceries') },
+                { id: 'liquor', el: document.getElementById('liquor') },
+                { id: 'bestsellers', el: document.getElementById('bestsellers') },
+                { id: 'products', el: document.getElementById('products') },
+                { id: 'home', el: document.getElementById('home') }
+            ];
+            cachedNavSections = sections.filter(s => s.el).map(s => ({
+                id: s.id,
+                top: s.el.offsetTop
+            }));
+        }
+
         function updateActiveNavOnScroll() {
             if (isClickScrolling) return;
 
-            const scrollPos = window.scrollY;
+            const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const fullHeight = document.documentElement.scrollHeight;
 
@@ -5512,31 +5533,20 @@
                 return;
             }
 
-            const sections = [
-                { id: 'contact', el: document.getElementById('contact') },
-                { id: 'policy', el: document.getElementById('policy') || document.getElementById('policy-contact') },
-                { id: 'about', el: document.getElementById('about') },
-                { id: 'offers', el: document.getElementById('offers') },
-                { id: 'products', el: document.getElementById('products') },
-                { id: 'home', el: document.getElementById('home') }
-            ];
-
-            for (let i = 0; i < sections.length; i++) {
-                const sec = sections[i];
-                if (sec.el) {
-                    const rect = sec.el.getBoundingClientRect();
-                    const docTop = rect.top + window.pageYOffset;
-                    if (scrollPos >= docTop - 160) {
-                        setActiveNavLink(sec.id);
-                        return;
-                    }
+            for (let i = 0; i < cachedNavSections.length; i++) {
+                const sec = cachedNavSections[i];
+                if (scrollPos >= sec.top - 180) {
+                    setActiveNavLink(sec.id);
+                    return;
                 }
             }
 
             setActiveNavLink('home');
         }
 
-        window.addEventListener('scroll', updateActiveNavOnScroll);
+        window.addEventListener('resize', updateCachedNavSections, { passive: true });
+        window.addEventListener('load', updateCachedNavSections);
+
 
         // Ensure Home is active on load
         setActiveNavLink('home');
@@ -5857,6 +5867,7 @@
                         <input type="tel" id="checkoutCustPhone" class="checkout-input"
                             placeholder="Phone Number (+977) *" required />
                     </div>
+                    <input type="email" id="checkoutCustEmail" class="checkout-input mt-2" placeholder="Email Address (Optional)" />
                     <input type="text" id="checkoutCustAddress" class="checkout-input mt-2"
                         placeholder="Delivery Address / Area (e.g., Lazimpat, Kathmandu) *" required />
                 </div>
@@ -6227,9 +6238,11 @@
             if (savedUser) {
                 const nameInp = document.getElementById('checkoutCustName');
                 const phoneInp = document.getElementById('checkoutCustPhone');
+                const emailInp = document.getElementById('checkoutCustEmail');
                 const addrInp = document.getElementById('checkoutCustAddress');
                 if (nameInp && savedUser.name && !nameInp.value) nameInp.value = savedUser.name;
                 if (phoneInp && savedUser.phone && !phoneInp.value) phoneInp.value = savedUser.phone;
+                if (emailInp && savedUser.email && !emailInp.value) emailInp.value = savedUser.email;
                 if (addrInp && savedUser.address && !addrInp.value) addrInp.value = savedUser.address;
             }
 
@@ -6269,13 +6282,15 @@
             if (s3) s3.style.display = 'none';
         }
 
-        function confirmAndPlaceOrder() {
+        async function confirmAndPlaceOrder() {
             const nameInp = document.getElementById('checkoutCustName');
             const phoneInp = document.getElementById('checkoutCustPhone');
+            const emailInp = document.getElementById('checkoutCustEmail');
             const addrInp = document.getElementById('checkoutCustAddress');
 
             const custName = nameInp ? nameInp.value.trim() : '';
             const custPhone = phoneInp ? phoneInp.value.trim() : '';
+            const custEmail = emailInp ? emailInp.value.trim() : '';
             const custAddress = addrInp ? addrInp.value.trim() : '';
 
             if (!custName || !custPhone || !custAddress) {
@@ -6327,13 +6342,14 @@ Please confirm my delivery dispatch. Thank you!`;
                 customer: {
                     name: custName,
                     phone: custPhone,
+                    email: custEmail,
                     address: custAddress
                 },
                 items: currentOrderItems,
                 total: currentOrderTotal,
                 formattedTotal: formattedTotal,
                 paymentMethod: 'Cash on Delivery (COD)',
-                status: 'Pending Dispatch'
+                status: 'new'
             };
 
             try {
@@ -6342,15 +6358,17 @@ Please confirm my delivery dispatch. Thank you!`;
                 localStorage.setItem('annapurna_orders', JSON.stringify(orders));
             } catch (err) { }
 
-            // 2b. Sync Order directly to Django Backend REST API
-            if (window.apiConfig) {
-                window.apiConfig.postOrder(orderRecord).catch(err => console.log('Backend API sync offline, order stored locally.', err));
-            } else {
-                fetch('http://127.0.0.1:8000/api/orders/', {
+            // 2b. Sync Order directly to Django Backend REST API BEFORE opening WhatsApp
+            try {
+                const postPromise = window.apiConfig ? window.apiConfig.postOrder(orderRecord) : fetch('/api/orders/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderRecord)
-                }).catch(err => console.log('Backend API sync offline, order stored locally.', err));
+                });
+                const timeoutPromise = new Promise(resolve => setTimeout(resolve, 1500));
+                await Promise.race([postPromise, timeoutPromise]);
+            } catch (err) {
+                console.log('Backend API sync offline or timeout, order stored locally.', err);
             }
 
             // 3. Clear Cart & Reset State Completely
@@ -6505,6 +6523,7 @@ Please confirm my delivery dispatch. Thank you!`;
         }
 
         // IntersectionObserver-based Scroll & Load Reveal Animations (Home Page Only)
+        // IntersectionObserver-based Scroll & Load Reveal Animations (Home Page Only)
         function initScrollRevealAnimations() {
             const revealElements = document.querySelectorAll('.reveal-on-scroll');
             if (!revealElements.length) return;
@@ -6522,46 +6541,65 @@ Please confirm my delivery dispatch. Thank you!`;
                     }
                 });
             }, {
-                threshold: 0.06,
-                rootMargin: '0px 0px -30px 0px'
+                threshold: 0.01,
+                rootMargin: '120px 0px 60px 0px' // Start revealing as element approaches viewport
             });
 
+            // Fast initial pass: immediately reveal elements in top view to prevent flicker
+            const topBoundary = (window.innerHeight || 800) + 100;
             revealElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 20 && rect.bottom > 0) {
-                    setTimeout(() => el.classList.add('is-revealed'), 60);
+                if (el.offsetTop < topBoundary) {
+                    el.classList.add('is-revealed');
                 } else {
                     observer.observe(el);
                 }
             });
         }
 
+        // Unified High-Performance Scroll Engine (runs on requestAnimationFrame)
+        let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const mainHeader = document.getElementById('mainHeader');
+        let isScrollFramePending = false;
+
+        function onUnifiedScroll() {
+            const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+            // 1. Smart Header Hide/Show
+            if (mainHeader) {
+                if (currentScrollY <= 30) {
+                    mainHeader.classList.remove('header-hidden');
+                } else if (currentScrollY > 90 && currentScrollY > lastScrollY) {
+                    mainHeader.classList.add('header-hidden');
+                } else if (currentScrollY < lastScrollY) {
+                    mainHeader.classList.remove('header-hidden');
+                }
+            }
+            lastScrollY = Math.max(0, currentScrollY);
+
+            // 2. Active Nav Link Tracking
+            if (typeof updateActiveNavOnScroll === 'function') {
+                updateActiveNavOnScroll();
+            }
+
+            isScrollFramePending = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!isScrollFramePending) {
+                window.requestAnimationFrame(onUnifiedScroll);
+                isScrollFramePending = true;
+            }
+        }, { passive: true });
+
         document.addEventListener('DOMContentLoaded', () => {
             updateGlobalCartBadgeUI();
             renderCartDrawerItems();
             setupCardActionButtons();
             initScrollRevealAnimations();
-        });
-
-        // Smart Header Hide on Down-Scroll & Show on Up-Scroll
-        let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
-        const mainHeader = document.getElementById('mainHeader');
-        window.addEventListener('scroll', () => {
-            const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
-            if (mainHeader) {
-                if (currentScrollY <= 30) {
-                    // Near top -> always visible
-                    mainHeader.classList.remove('header-hidden');
-                } else if (currentScrollY > 90 && currentScrollY > lastScrollY) {
-                    // Scrolling DOWN -> hide header smoothly
-                    mainHeader.classList.add('header-hidden');
-                } else if (currentScrollY < lastScrollY) {
-                    // Scrolling UP -> reveal header immediately
-                    mainHeader.classList.remove('header-hidden');
-                }
+            if (typeof updateCachedNavSections === 'function') {
+                updateCachedNavSections();
             }
-            lastScrollY = Math.max(0, currentScrollY);
-        }, { passive: true });
+        });
     </script>
     <!-- Theme Toggle Engine -->
     <script src="theme.js"></script>

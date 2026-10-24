@@ -9,9 +9,15 @@ def sidebar_alerts(request):
         return ctx
     from django.db.models import F
     from products.models import Product
+    from sales.models import OnlineOrder
+
     low_stock_count = Product.objects.filter(
         is_deleted=False, quantity_in_stock__lte=F('low_stock_threshold')
     ).count()
     ctx['sidebar_low_stock_count'] = low_stock_count
+
+    new_orders_count = OnlineOrder.objects.filter(status=OnlineOrder.Status.NEW).count()
+    ctx['sidebar_new_orders_count'] = new_orders_count
     return ctx
+
 

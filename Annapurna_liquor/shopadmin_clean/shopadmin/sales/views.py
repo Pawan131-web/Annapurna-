@@ -6,10 +6,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import JsonResponse
+
 from inventory.models import StockMovement
 from products.models import Product
 from .forms import SaleForm, SaleItemFormSet
-from .models import Sale, SaleItem
+from .models import Sale, SaleItem, OnlineOrder, OnlineOrderItem
+
 
 
 class SaleListView(LoginRequiredMixin, ListView):
@@ -123,3 +128,115 @@ def sale_delete(request, pk):
         return redirect('sales:list')
 
     return render(request, 'sales/sale_confirm_delete.html', {'sale': sale})
+
+
+# ==========================================
+# ONLINE PURCHASE REQUESTS / ORDERS VIEWS
+# ==========================================
+
+class OrderListView(LoginRequiredMixin, ListView):
+    model = OnlineOrder
+    template_name = 'sales/order_list.html'
+    context_object_name = 'orders'
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = OnlineOrder.objects.prefetch_related('items__product').order_by('-created_at')
+        q = self.request.GET.get('q', '').strip()
+        status_val = self.request.GET.get('status', '').strip().lower()
+        date_from = self.request.GET.get('from', '').strip()
+        date_to = self.request.GET.get('to', '').strip()
+
+        if q:
+            qs = qs.filter(
+                Q(order_number__icontains=q) |
+                Q(customer_name__icontains=q) |
+                Q(customer_phone__icontains=q) |
+                Q(customer_email__icontains=q) |
+                Q(delivery_address__icontains=q) |
+                Q(items__product_name__icontains=q)
+            ).distinct()
+
+        if status_val and status_val != 'all':
+            qs = qs.filter(status=status_val)
+
+        if date_from:
+            qs = qs.filter(created_at__date__gte=date_from)
+        if date_to:
+            qs = qs.filter(created_at__date__lte=date_to)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        all_orders = OnlineOrder.objects.all()
+        ctx['counts'] = {
+            'all': all_orders.count(),
+            'new': all_orders.filter(status=OnlineOrder.Status.NEW).count(),
+            'contacted': all_orders.filter(status=OnlineOrder.Status.CONTACTED).count(),
+            'completed': all_orders.filter(status=OnlineOrder.Status.COMPLETED).count(),
+            'cancelled': all_orders.filter(status=OnlineOrder.Status.CANCELLED).count(),
+        }
+        ctx['status_choices'] = OnlineOrder.Status.choices
+        ctx['current_status'] = self.request.GET.get('status', 'all')
+        ctx['q'] = self.request.GET.get('q', '')
+        ctx['date_from'] = self.request.GET.get('from', '')
+        ctx['date_to'] = self.request.GET.get('to', '')
+        return ctx
+
+
+class OrderDetailView(LoginRequiredMixin, DetailView):
+    model = OnlineOrder
+    template_name = 'sales/order_detail.html'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['status_choices'] = OnlineOrder.Status.choices
+        return ctx
+
+
+@login_required
+def order_update_status(request, pk):
+    order = get_object_or_404(OnlineOrder, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        notes = request.POST.get('notes')
+
+        valid_statuses = [c[0] for c in OnlineOrder.Status.choices]
+        if new_status in valid_statuses:
+            order.status = new_status
+            if notes is not None:
+                order.notes = notes.strip()
+            order.save(update_fields=['status', 'notes', 'updated_at'])
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json':
+                return JsonResponse({
+                    'status': 'success',
+                    'new_status': order.status,
+                    'status_display': order.get_status_display(),
+                    'badge_class': order.get_status_badge_class(),
+                })
+
+            messages.success(request, f"Order {order.order_number} status updated to '{order.get_status_display()}'.")
+        else:
+            messages.error(request, f"Invalid status '{new_status}' provided.")
+
+        next_url = request.POST.get('next') or request.GET.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect('sales:order_detail', pk=order.pk)
+
+    return redirect('sales:order_detail', pk=order.pk)
+
+
+@login_required
+def order_delete(request, pk):
+    order = get_object_or_404(OnlineOrder, pk=pk)
+    if request.method == 'POST':
+        order_num = order.order_number
+        order.delete()
+        messages.success(request, f"Order request {order_num} has been deleted.")
+        return redirect('sales:order_list')
+    return render(request, 'sales/order_confirm_delete.html', {'order': order})
+

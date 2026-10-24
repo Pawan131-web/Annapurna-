@@ -22,9 +22,9 @@ class OnlineOrderItemInline(admin.TabularInline):
 
 @admin.register(OnlineOrder)
 class OnlineOrderAdmin(admin.ModelAdmin):
-    list_display = ('order_number', 'customer_name', 'customer_phone', 'status', 'total_amount', 'created_at')
+    list_display = ('order_number', 'customer_name', 'customer_phone', 'customer_email', 'status', 'total_amount', 'created_at')
     list_filter = ('status', 'created_at')
-    search_fields = ('order_number', 'customer_name', 'customer_phone', 'delivery_address')
+    search_fields = ('order_number', 'customer_name', 'customer_phone', 'customer_email', 'delivery_address')
     list_editable = ('status',)
     inlines = [OnlineOrderItemInline]
 

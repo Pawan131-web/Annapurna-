@@ -25,30 +25,30 @@
 
       <div class="row g-3">
         <div class="col-md-6">
-          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Store Name</label>
-          <input type="text" class="form-control" value="{{ store_name }}" readonly style="background: var(--bg-hover, #F8FAFC); font-weight:600;">
+          <label class="form-label text-secondary" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Store Name</label>
+          <input type="text" class="form-control" value="{{ store_name }}" readonly style="background: var(--page-bg); font-weight:600;">
         </div>
 
         <div class="col-md-6">
-          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Default Currency</label>
-          <input type="text" class="form-control" value="{{ currency }}" readonly style="background: var(--bg-hover, #F8FAFC); font-weight:600;">
+          <label class="form-label text-secondary" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Default Currency</label>
+          <input type="text" class="form-control" value="{{ currency }}" readonly style="background: var(--page-bg); font-weight:600;">
         </div>
 
         <div class="col-md-6">
-          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Support Email</label>
-          <input type="text" class="form-control" value="{{ store_email }}" readonly style="background: var(--bg-hover, #F8FAFC);">
+          <label class="form-label text-secondary" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Support Email</label>
+          <input type="text" class="form-control" value="{{ store_email }}" readonly style="background: var(--page-bg);">
         </div>
 
         <div class="col-md-6">
-          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Contact Phone / WhatsApp</label>
-          <input type="text" class="form-control" value="{{ store_phone }}" readonly style="background: var(--bg-hover, #F8FAFC);">
+          <label class="form-label text-secondary" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Contact Phone / WhatsApp</label>
+          <input type="text" class="form-control" value="{{ store_phone }}" readonly style="background: var(--page-bg);">
         </div>
 
         <div class="col-12">
-          <label class="form-label text-muted" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Operating Timezone</label>
+          <label class="form-label text-secondary" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Operating Timezone</label>
           <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-light text-dark border p-2"><i class="bi bi-clock me-1 text-muted"></i>{{ timezone }}</span>
-            <span class="text-muted" style="font-size:0.8rem;">All sales and inventory logs match Nepal Standard Time (UTC+05:45).</span>
+            <span class="pill pill-muted p-2"><i class="bi bi-clock me-1"></i>{{ timezone }}</span>
+            <span class="text-secondary" style="font-size:0.8rem;">All sales and inventory logs match Nepal Standard Time (UTC+05:45).</span>
           </div>
         </div>
       </div>
@@ -57,12 +57,12 @@
     <!-- Admin Account Profile Card -->
     <div class="section-card">
       <div class="d-flex align-items-center gap-2 mb-3">
-        <div style="width:36px; height:36px; border-radius:8px; background: rgba(59, 130, 246, 0.12); color: #3B82F6; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+        <div class="stat-icon-box blue" style="width:36px; height:36px; border-radius:8px; font-size:1.1rem;">
           <i class="bi bi-person-badge"></i>
         </div>
         <div>
           <h6 class="fw-bold mb-0">Your Account Details</h6>
-          <span class="text-muted" style="font-size:0.8rem;">Manage your administrator contact profile</span>
+          <span class="text-secondary" style="font-size:0.8rem;">Manage your administrator contact profile</span>
         </div>
       </div>
 
@@ -98,12 +98,12 @@
     <!-- Change Password Card -->
     <div class="section-card mb-4">
       <div class="d-flex align-items-center gap-2 mb-3">
-        <div style="width:36px; height:36px; border-radius:8px; background: rgba(229, 193, 88, 0.15); color: #B8860B; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+        <div class="stat-icon-box gold" style="width:36px; height:36px; border-radius:8px; font-size:1.1rem;">
           <i class="bi bi-shield-lock"></i>
         </div>
         <div>
           <h6 class="fw-bold mb-0">Security & Password</h6>
-          <span class="text-muted" style="font-size:0.8rem;">Change your dashboard administrator password</span>
+          <span class="text-secondary" style="font-size:0.8rem;">Change your dashboard administrator password</span>
         </div>
       </div>
 
@@ -128,12 +128,12 @@
     <!-- System Diagnostics Card -->
     <div class="section-card">
       <div class="d-flex align-items-center gap-2 mb-3">
-        <div style="width:36px; height:36px; border-radius:8px; background: rgba(100, 116, 139, 0.12); color: #64748B; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+        <div class="stat-icon-box purple" style="width:36px; height:36px; border-radius:8px; font-size:1.1rem;">
           <i class="bi bi-cpu"></i>
         </div>
         <div>
           <h6 class="fw-bold mb-0">System Environment</h6>
-          <span class="text-muted" style="font-size:0.8rem;">Core platform versions & server statistics</span>
+          <span class="text-secondary" style="font-size:0.8rem;">Core platform versions & server statistics</span>
         </div>
       </div>
 

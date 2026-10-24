@@ -57,6 +57,25 @@
 
             --shadow-subtle: 0 4px 18px rgba(0, 0, 0, 0.04);
             --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.05);
+
+            /* Theme Variables (WCAG AA Compliant in Light & Dark Mode) */
+            --accent: #C9A24B;
+            --on-accent: #1C1917;
+            --accent-text: #8A6410;
+            --card-bg: #FFFFFF;
+            --text-primary: #1F2937;
+            --border: #E5E0D3;
+        }
+
+        html.dark-theme,
+        body.dark-theme,
+        [data-theme="dark"] {
+            --accent: #D4AF5A;
+            --on-accent: #1C1917;
+            --accent-text: #D4AF5A;
+            --card-bg: #211D1A;
+            --text-primary: #F3EFE6;
+            --border: #36302B;
         }
 
         * {
@@ -68,7 +87,9 @@
         html {
             scroll-behavior: smooth;
             background-color: var(--bg-footer, #121518);
-            overscroll-behavior-y: none;
+            overflow-x: clip;
+            overflow-y: auto;
+            min-height: 100%;
         }
 
         body {
@@ -76,8 +97,9 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             line-height: 1.5;
-            overflow-x: hidden;
-            overscroll-behavior-y: none;
+            min-height: 100vh;
+            overflow-x: clip;
+            overflow-y: visible;
         }
 
         a {
@@ -1050,22 +1072,24 @@
             font-family: 'Playfair Display', Georgia, serif;
             font-size: 26px;
             font-weight: 700;
-            color: #1C1917;
+            color: var(--text-primary) !important;
         }
 
         .blueprint-view-all {
             font-size: 14px;
             font-weight: 700;
-            color: #C5A059;
+            color: var(--accent-text) !important;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            transition: color 0.2s ease;
+            transition: color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
         }
 
         .blueprint-view-all:hover {
-            color: #1C1917;
+            color: var(--accent-text) !important;
+            opacity: 0.85;
+            transform: translateX(2px);
         }
 
         /* 6 Product Cards Grid */
@@ -1076,21 +1100,22 @@
         }
 
         .blueprint-card {
-            background: #FAF6ED;
-            border: 1px solid #E8E0CE;
-            border-radius: 16px;
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 16px !important;
             padding: 14px;
             display: flex;
             flex-direction: column;
             text-decoration: none;
             color: inherit;
-            transition: all 0.25s ease;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
         }
 
         .blueprint-card:hover {
             transform: translateY(-4px);
-            border-color: #C5A059;
-            box-shadow: 0 8px 24px rgba(28, 25, 23, 0.08);
+            border-color: var(--accent) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         .blueprint-card-img-wrapper {
@@ -1133,7 +1158,7 @@
         .blueprint-card-cat {
             font-size: 10px;
             font-weight: 700;
-            color: #C5A059;
+            color: var(--accent-text) !important;
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-bottom: 4px;
@@ -1142,19 +1167,19 @@
         .blueprint-card-title {
             font-size: 13px;
             font-weight: 700;
-            color: #1C1917;
-            line-height: 1.25;
+            color: var(--text-primary) !important;
+            line-height: 1.3;
             margin-bottom: 6px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            height: 32px;
+            height: 34px;
         }
 
         .blueprint-card-rating {
             font-size: 11px;
-            color: #C5A059;
+            color: var(--accent-text);
             margin-bottom: 10px;
         }
 
@@ -1166,27 +1191,34 @@
         }
 
         .blueprint-card-price {
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 800;
-            color: #1C1917;
+            color: var(--accent-text) !important;
         }
 
         .blueprint-card-plus {
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #D4A359;
-            color: #FFFFFF;
+            background: var(--accent) !important;
+            color: var(--on-accent) !important;
             font-size: 16px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s ease;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
         }
 
-        .blueprint-card:hover .blueprint-card-plus {
-            background: #C59347;
+        .blueprint-card-plus:hover {
+            transform: scale(1.1);
+            opacity: 0.92;
+        }
+
+        .blueprint-card-plus svg {
+            stroke: var(--on-accent) !important;
         }
 
         /* Responsive */
@@ -1466,12 +1498,14 @@
             padding: 20px;
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .checkout-modal-backdrop.active {
             opacity: 1;
             visibility: visible;
+            pointer-events: auto;
         }
 
         .checkout-modal-card {
@@ -1873,6 +1907,7 @@
             justify-content: center;
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             padding: 20px;
         }
@@ -1880,6 +1915,7 @@
         .auth-modal-overlay.active {
             opacity: 1;
             visibility: visible;
+            pointer-events: auto;
         }
 
         .auth-modal-container {
@@ -2105,6 +2141,7 @@
             z-index: 10000;
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             display: flex;
             justify-content: flex-end;
@@ -2113,6 +2150,7 @@
         .cart-drawer-overlay.active {
             opacity: 1;
             visibility: visible;
+            pointer-events: auto;
         }
 
         .cart-drawer-panel {
@@ -2632,41 +2670,8 @@
         }
     
         /* ==========================================
-           COMPACT SIZE SELECTOR & META BADGES
+           COMPACT SIZE SELECTOR
            ========================================== */
-        .pdp-meta-badges {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 10px 0 14px;
-        }
-        .pdp-meta-badge {
-            background: #FEF3C7;
-            color: #92400E;
-            border: 1px solid #FCD34D;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .pdp-meta-badge.badge-stock {
-            background: #DCFCE7;
-            color: #166534;
-            border-color: #86EFAC;
-        }
-        body.dark-theme .pdp-meta-badge {
-            background: rgba(255, 255, 255, 0.06) !important;
-            color: #E5C158 !important;
-            border-color: rgba(212, 163, 89, 0.35) !important;
-        }
-        body.dark-theme .pdp-meta-badge.badge-stock {
-            background: rgba(37, 211, 102, 0.12) !important;
-            color: #25D366 !important;
-            border-color: rgba(37, 211, 102, 0.3) !important;
-        }
 
         .pdp-size-selector-section {
             margin: 20px 0 18px;
@@ -2785,7 +2790,7 @@
 <body>
 
     <!-- EXACT HEADER COMPONENT FROM LIQUIOR.HTML (NO HEADER MODIFICATIONS) -->
-    <header>
+    <header id="mainHeader">
         <div class="header-main">
             <div class="container">
 
@@ -2927,13 +2932,6 @@
                         Product Name
                     </h1>
 
-                    <!-- Clean Meta Badges -->
-                    <div class="pdp-meta-badges">
-                        <span class="pdp-meta-badge" id="pdpMetaCategory">Liquor</span>
-                        <span class="pdp-meta-badge" id="pdpMetaBrand">Brand</span>
-                        <span class="pdp-meta-badge" id="pdpMetaCountry">Nepal</span>
-                        <span class="pdp-meta-badge badge-stock">In Stock</span>
-                    </div>
 
                     <!-- Clean Concise Description (Minimal) -->
                     <p class="blueprint-description" id="pdpShortDesc" style="margin-top: 10px; font-size: 14.5px; line-height: 1.6;">
@@ -3187,6 +3185,7 @@
                                 <input type="text" id="checkoutCustName" class="checkout-input" placeholder="Full Name *" required />
                                 <input type="tel" id="checkoutCustPhone" class="checkout-input" placeholder="Phone Number (+977) *" required />
                             </div>
+                            <input type="email" id="checkoutCustEmail" class="checkout-input mt-2" placeholder="Email Address (Optional)" />
                             <input type="text" id="checkoutCustAddress" class="checkout-input mt-2" placeholder="Delivery Address / Area (e.g., Lazimpat, Kathmandu) *" required />
                         </div>
 
@@ -8238,13 +8237,13 @@
                     priceRaw: 650,
                     rating: "4.9",
                     reviews: 36,
-                    img: "asstes/website-designs/alcohol design/classics_tobacco.png",
+                    img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg",
                     desc: "Handpicked premium cashews, almonds, and dried fruit mix. Packed fresh, perfect for healthy snacking, family gatherings, and everyday pantry nourishment.",
                     brand: "Annapurna Pantry",
                     volume: "1kg Pack",
                     country: "Nepal",
                     gallery: [
-                        "asstes/website-designs/alcohol design/classics_tobacco.png"
+                        "asstes/website-designs/grocries/classics_snacks_sweets.jpg"
                     ]
                 },
                 {
@@ -8344,14 +8343,14 @@
                     priceRaw: 520,
                     rating: "4.9",
                     reviews: 63,
-                    img: "asstes/website-designs/alcohol design/classics_tobacco.png",
+                    img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg",
                     desc: "Assorted gourmet nuts, dried figs, and golden raisins. High in energy, healthy fats, and vitamins for daily wholesome snacking.",
                     brand: "Annapurna Pantry",
                     volume: "1.5kg Pack",
                     country: "Nepal",
                     gallery: [
-                        "asstes/website-designs/alcohol design/classics_tobacco.png",
-                        "asstes/website-designs/grocries/supermarket_cart.jpeg"
+                        "asstes/website-designs/grocries/classics_snacks_sweets.jpg",
+                        "asstes/website-designs/grocries/classics_packaged_foods.jpg"
                     ]
                 },
                 {
@@ -8556,13 +8555,13 @@
                     priceRaw: 1250,
                     rating: "4.9",
                     reviews: 34,
-                    img: "asstes/website-designs/alcohol design/classics_tobacco.png",
+                    img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg",
                     desc: "Gourmet roasted macadamias, cashews, and almonds tossed with authentic black summer truffle salt and rosemary. The ultimate savory snack pairing.",
                     brand: "Annapurna Gourmet",
                     volume: "450g Tin",
                     country: "Nepal",
                     gallery: [
-                        "asstes/website-designs/alcohol design/classics_tobacco.png"
+                        "asstes/website-designs/grocries/classics_snacks_sweets.jpg"
                     ]
                 },
                 {
@@ -8706,7 +8705,7 @@
                 window.location.href = `product-detail.html?id=${id}&type=${type || 'liquor'}${nameParam}`;
             }
 
-            function loadPDP() {
+            async function loadPDP() {
                 const params = new URLSearchParams(window.location.search);
                 let typeParam = params.get('type');
                 let nameParam = params.get('name');
@@ -8761,6 +8760,41 @@
                             isGrocery = !isGrocery;
                         }
                     }
+                }
+
+                // 3. Database API lookup if not in static list (e.g. database products)
+                if (!found && pId) {
+                    try {
+                        const res = await fetch(`/api/products/${pId}/`);
+                        if (res.ok) {
+                            const pData = await res.json();
+                            if (pData && pData.name) {
+                                isGrocery = (pData.department === 'grocery');
+                                const cleanPrice = parseInt(pData.selling_price) || 0;
+                                const imgPrimary = (pData.images && pData.images[0]) ? pData.images[0].image : (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png');
+                                found = {
+                                    id: pData.id,
+                                    name: pData.name,
+                                    category: pData.category ? pData.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                                    cat: pData.category ? pData.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                                    brand: pData.brand || 'Annapurna Selection',
+                                    country: pData.origin || 'Nepal',
+                                    img: imgPrimary,
+                                    priceRaw: cleanPrice,
+                                    minPrice: cleanPrice,
+                                    maxPrice: cleanPrice,
+                                    priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
+                                    sizeDisplay: pData.volume || (isGrocery ? '1 Pack' : '750ML'),
+                                    hasMultipleSizes: false,
+                                    variants: [],
+                                    desc: pData.description || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
+                                    rating: pData.rating || '4.9',
+                                    reviews: 50,
+                                    gallery: (pData.images && pData.images.length > 0) ? pData.images.map(i => i.image) : [imgPrimary]
+                                };
+                            }
+                        }
+                    } catch (e) {}
                 }
 
                 // 3. Fallback from LocalStorage object if still not in static catalogs
@@ -8825,13 +8859,6 @@
                     imgEl.alt = activeProduct.name;
                 }
 
-                // Meta Badges
-                const catBadge = document.getElementById('pdpMetaCategory');
-                if (catBadge) catBadge.textContent = activeProduct.category || (isGrocery ? 'Grocery' : 'Liquor');
-                const brandBadge = document.getElementById('pdpMetaBrand');
-                if (brandBadge) brandBadge.textContent = activeProduct.brand || 'Premium';
-                const countryBadge = document.getElementById('pdpMetaCountry');
-                if (countryBadge) countryBadge.textContent = activeProduct.country || 'Nepal';
 
                 // Description (Clean & Concise)
                 const descEl = document.getElementById('pdpShortDesc');
@@ -8963,20 +8990,22 @@
 
             // Create Blueprint Product Card HTML
             function createBlueprintCardHTML(item, isGrocery) {
-                const itemPrice = `NPR. ${item.priceRaw.toLocaleString('en-US')}.00`;
-                const typeStr = isGrocery ? 'grocery' : 'liquor';
-                const isFav = globalWishlist.includes(item.name);
-                const safeName = item.name.replace(/'/g, "\\'");
+                const priceNum = item.priceRaw || (typeof item.price === 'number' ? item.price : parseInt(String(item.price).replace(/[^0-9]/g, '')) || 0);
+                const itemPrice = item.price && String(item.price).startsWith('NPR') ? item.price : `NPR. ${priceNum.toLocaleString('en-US')}.00`;
+                const typeStr = (item.department === 'grocery' || isGrocery) ? 'grocery' : 'liquor';
+                const safeName = (item.name || '').replace(/'/g, "\\'");
+                const fallbackImg = typeStr === 'grocery' ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png';
+                const imgSrc = item.img || fallbackImg;
 
                 return `
                 <div class="blueprint-card" onclick="navigateToProductDetail(${item.id}, '${typeStr}', '${safeName}')" style="cursor: pointer;">
                     <div class="blueprint-card-img-wrapper">
-                        <img src="${item.img}" alt="${item.name}" />
+                        <img src="${imgSrc}" alt="${item.name}" onerror="this.src='${fallbackImg}'" />
                     </div>
                     <h4 class="blueprint-card-title">${item.name}</h4>
                     <div class="blueprint-card-footer">
                         <span class="blueprint-card-price">${itemPrice}</span>
-                        <div class="blueprint-card-plus" title="Add to Cart" onclick="event.stopPropagation(); handleGlobalAddToCart({id: ${item.id}, name: '${safeName}', price: '${itemPrice}', priceRaw: ${item.priceRaw}, img: '${item.img}'}, this);">
+                        <div class="blueprint-card-plus" title="Add to Cart" onclick="event.stopPropagation(); handleGlobalAddToCart({id: ${item.id}, name: '${safeName}', price: '${itemPrice}', priceRaw: ${priceNum}, img: '${imgSrc}'}, this);">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         </div>
                     </div>
@@ -8984,18 +9013,11 @@
                 `;
             }
 
-            // Render Similar / Recommended Products
-            function renderSimilarProducts(isGrocery = false, dataSource = PRODUCTS_DATA) {
+            // Render Similar / Recommended Products from Server API
+            async function renderSimilarProducts(isGrocery = false, dataSource = PRODUCTS_DATA) {
                 const container = document.getElementById('similarProductsContainer');
+                const section = document.querySelector('.blueprint-related-section');
                 if (!container) return;
-
-                // Pick items in same category if available, then other items
-                let related = dataSource.filter(p => p.id !== activeProduct.id && p.cat === activeProduct.cat);
-                if (related.length < 6) {
-                    const others = dataSource.filter(p => p.id !== activeProduct.id && p.cat !== activeProduct.cat);
-                    related = related.concat(others);
-                }
-                related = related.slice(0, 6);
 
                 // Update View All Header Link
                 const viewAllLink = document.querySelector('.blueprint-view-all');
@@ -9005,7 +9027,32 @@
                     if (span) span.textContent = isGrocery ? 'View All Groceries' : 'View All Drinks';
                 }
 
-                container.innerHTML = related.map(item => createBlueprintCardHTML(item, isGrocery)).join('');
+                const pId = activeProduct ? activeProduct.id : null;
+                const pName = activeProduct ? (activeProduct.name || '') : '';
+                const dept = isGrocery ? 'grocery' : 'liquor';
+
+                try {
+                    const apiUrl = `/api/products/related/?product_id=${pId || ''}&name=${encodeURIComponent(pName)}&department=${dept}`;
+                    const res = await fetch(apiUrl);
+                    if (res.ok) {
+                        const related = await res.json();
+                        if (Array.isArray(related) && related.length > 0) {
+                            if (section) section.style.display = '';
+                            container.innerHTML = related.map(item => createBlueprintCardHTML(item, isGrocery)).join('');
+                            return;
+                        } else {
+                            // Rule 5: If there are 0 matches, hide the entire "You May Also Like" section
+                            if (section) section.style.display = 'none';
+                            container.innerHTML = '';
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Could not fetch server-side related products:', err);
+                }
+
+                // If error or 0 matches, safely hide section
+                if (section) section.style.display = 'none';
             }
 
             let currentOrderItems = [];
@@ -9116,9 +9163,11 @@
                 if (savedUser) {
                     const nameInp = document.getElementById('checkoutCustName');
                     const phoneInp = document.getElementById('checkoutCustPhone');
+                    const emailInp = document.getElementById('checkoutCustEmail');
                     const addrInp = document.getElementById('checkoutCustAddress');
                     if (nameInp && savedUser.name && !nameInp.value) nameInp.value = savedUser.name;
                     if (phoneInp && savedUser.phone && !phoneInp.value) phoneInp.value = savedUser.phone;
+                    if (emailInp && savedUser.email && !emailInp.value) emailInp.value = savedUser.email;
                     if (addrInp && savedUser.address && !addrInp.value) addrInp.value = savedUser.address;
                 }
 
@@ -9170,13 +9219,15 @@
                 }
             }
 
-            function confirmAndPlaceOrder() {
+            async function confirmAndPlaceOrder() {
                 const nameInp = document.getElementById('checkoutCustName');
                 const phoneInp = document.getElementById('checkoutCustPhone');
+                const emailInp = document.getElementById('checkoutCustEmail');
                 const addrInp = document.getElementById('checkoutCustAddress');
 
                 const custName = nameInp ? nameInp.value.trim() : '';
                 const custPhone = phoneInp ? phoneInp.value.trim() : '';
+                const custEmail = emailInp ? emailInp.value.trim() : '';
                 const custAddress = addrInp ? addrInp.value.trim() : '';
 
                 if (!custName || !custPhone || !custAddress) {
@@ -9227,13 +9278,14 @@ Please confirm my delivery dispatch. Thank you!`;
                     customer: {
                         name: custName,
                         phone: custPhone,
+                        email: custEmail,
                         address: custAddress
                     },
                     items: currentOrderItems,
                     total: currentOrderTotal,
                     formattedTotal: formattedTotal,
                     paymentMethod: 'Cash on Delivery (COD)',
-                    status: 'Pending Dispatch'
+                    status: 'new'
                 };
 
                 try {
@@ -9242,15 +9294,17 @@ Please confirm my delivery dispatch. Thank you!`;
                     localStorage.setItem('annapurna_orders', JSON.stringify(orders));
                 } catch (err) {}
 
-                // 2b. Sync Order directly to Django Backend REST API
-                if (window.apiConfig) {
-                    window.apiConfig.postOrder(orderRecord).catch(err => console.log('Backend API sync offline, order stored locally.', err));
-                } else {
-                    fetch('http://127.0.0.1:8000/api/orders/', {
+                // 2b. Sync Order directly to Django Backend REST API BEFORE opening WhatsApp
+                try {
+                    const postPromise = window.apiConfig ? window.apiConfig.postOrder(orderRecord) : fetch('/api/orders/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(orderRecord)
-                    }).catch(err => console.log('Backend API sync offline, order stored locally.', err));
+                    });
+                    const timeoutPromise = new Promise(resolve => setTimeout(resolve, 1500));
+                    await Promise.race([postPromise, timeoutPromise]);
+                } catch (err) {
+                    console.log('Backend API sync offline or timeout, order stored locally.', err);
                 }
 
                 // 3. Clear Cart & Reset State Completely

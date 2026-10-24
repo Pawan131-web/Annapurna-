@@ -500,18 +500,27 @@ body.dark-theme .catalog-subtitle {
 /* ===================================================================
    PRODUCT CARDS ACROSS ALL PAGES IN DARK MODE
    =================================================================== */
-body.dark-theme .product-card,
-body.dark-theme .blueprint-card {
+body.dark-theme .product-card {
     background: #14171E !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
 }
 
-body.dark-theme .product-card:hover,
-body.dark-theme .blueprint-card:hover {
+body.dark-theme .blueprint-card {
+    background: var(--card-bg) !important;
+    border-color: var(--border) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-theme .product-card:hover {
     background: #1A1E26 !important;
     border-color: var(--color-champagne-gold) !important;
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 18px rgba(212, 163, 89, 0.22) !important;
+}
+
+body.dark-theme .blueprint-card:hover {
+    border-color: var(--accent) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 18px rgba(212, 175, 90, 0.22) !important;
 }
 
 body.dark-theme .product-img-wrapper,
@@ -520,14 +529,20 @@ body.dark-theme .blueprint-card-img-wrapper {
     border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
-body.dark-theme .product-name,
-body.dark-theme .blueprint-card-title {
+body.dark-theme .product-name {
     color: #FAFAF7 !important;
 }
 
-body.dark-theme .product-price,
-body.dark-theme .blueprint-card-price {
+body.dark-theme .blueprint-card-title {
+    color: var(--text-primary) !important;
+}
+
+body.dark-theme .product-price {
     color: var(--color-gold-bright) !important;
+}
+
+body.dark-theme .blueprint-card-price {
+    color: var(--accent-text) !important;
 }
 
 body.dark-theme .product-size-badge {
@@ -541,18 +556,33 @@ body.dark-theme .blueprint-card-footer {
     border-top-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-body.dark-theme .product-add-btn,
-body.dark-theme .blueprint-card-plus {
+body.dark-theme .product-add-btn {
     background: #232833 !important;
     border-color: #2F3644 !important;
     color: #FAFAF7 !important;
 }
 
-body.dark-theme .product-add-btn:hover,
-body.dark-theme .blueprint-card-plus:hover {
+body.dark-theme .blueprint-card-plus {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: var(--on-accent) !important;
+}
+
+body.dark-theme .product-add-btn:hover {
     background: var(--color-champagne-gold) !important;
     border-color: var(--color-champagne-gold) !important;
     color: #121518 !important;
+}
+
+body.dark-theme .blueprint-card-plus:hover {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: var(--on-accent) !important;
+    opacity: 0.92;
+}
+
+body.dark-theme .blueprint-card-plus svg {
+    stroke: var(--on-accent) !important;
 }
 
 /* ===================================================================

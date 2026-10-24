@@ -37,18 +37,18 @@
           <td>
             <a href="{% url 'categories:detail' c.pk %}" class="product-name fw-bold">{{ c.name }}</a>
             {% if c.subcategories.exists %}
-              <div style="font-size:.72rem; color:var(--accent); font-weight:600;">{{ c.subcategories.count }} subcategories</div>
+              <div style="font-size:.72rem; color:var(--accent-text); font-weight:600;">{{ c.subcategories.count }} subcategories</div>
             {% endif %}
           </td>
           <td>
             {% if c.parent %}
-              <span class="badge bg-light text-dark border"><i class="bi bi-diagram-2 me-1"></i>{{ c.parent.name }}</span>
+              <span class="pill pill-muted"><i class="bi bi-diagram-2 me-1"></i>{{ c.parent.name }}</span>
             {% else %}
-              <span class="text-muted" style="font-size:.82rem;">Main Category</span>
+              <span class="text-secondary" style="font-size:.82rem;">Main Category</span>
             {% endif %}
           </td>
-          <td class="text-muted" style="font-size:.85rem;">{{ c.description|truncatechars:50|default:"—" }}</td>
-          <td style="font-weight: 600;">{{ c.product_count }}</td>
+          <td class="text-secondary" style="font-size:.85rem;">{{ c.description|truncatechars:50|default:"—" }}</td>
+          <td style="font-weight: 600; color:var(--text-primary);">{{ c.product_count }}</td>
           <td>
             {% if c.is_active %}
               <span class="status-pill completed">Active</span>

@@ -68,7 +68,6 @@
         html {
             scroll-behavior: smooth;
             background-color: var(--bg-footer, #121518);
-            overscroll-behavior-y: none;
         }
 
         body {
@@ -78,7 +77,6 @@
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            overscroll-behavior-y: none;
         }
 
         a {
@@ -6273,6 +6271,7 @@
                         <input type="text" id="checkoutCustName" class="checkout-input" placeholder="Full Name *" required />
                         <input type="tel" id="checkoutCustPhone" class="checkout-input" placeholder="Phone Number (+977) *" required />
                     </div>
+                    <input type="email" id="checkoutCustEmail" class="checkout-input mt-2" placeholder="Email Address (Optional)" />
                     <input type="text" id="checkoutCustAddress" class="checkout-input mt-2" placeholder="Delivery Address / Area (e.g., Lazimpat, Kathmandu) *" required />
                 </div>
 
@@ -6647,9 +6646,11 @@
             if (savedUser) {
                 const nameInp = document.getElementById('checkoutCustName');
                 const phoneInp = document.getElementById('checkoutCustPhone');
+                const emailInp = document.getElementById('checkoutCustEmail');
                 const addrInp = document.getElementById('checkoutCustAddress');
                 if (nameInp && savedUser.name && !nameInp.value) nameInp.value = savedUser.name;
                 if (phoneInp && savedUser.phone && !phoneInp.value) phoneInp.value = savedUser.phone;
+                if (emailInp && savedUser.email && !emailInp.value) emailInp.value = savedUser.email;
                 if (addrInp && savedUser.address && !addrInp.value) addrInp.value = savedUser.address;
             }
 
@@ -6689,13 +6690,15 @@
             if (s3) s3.style.display = 'none';
         }
 
-        function confirmAndPlaceOrder() {
+        async function confirmAndPlaceOrder() {
             const nameInp = document.getElementById('checkoutCustName');
             const phoneInp = document.getElementById('checkoutCustPhone');
+            const emailInp = document.getElementById('checkoutCustEmail');
             const addrInp = document.getElementById('checkoutCustAddress');
 
             const custName = nameInp ? nameInp.value.trim() : '';
             const custPhone = phoneInp ? phoneInp.value.trim() : '';
+            const custEmail = emailInp ? emailInp.value.trim() : '';
             const custAddress = addrInp ? addrInp.value.trim() : '';
 
             if (!custName || !custPhone || !custAddress) {
@@ -6746,13 +6749,14 @@ Please confirm my delivery dispatch. Thank you!`;
                 customer: {
                     name: custName,
                     phone: custPhone,
+                    email: custEmail,
                     address: custAddress
                 },
                 items: currentOrderItems,
                 total: currentOrderTotal,
                 formattedTotal: formattedTotal,
                 paymentMethod: 'Cash on Delivery (COD)',
-                status: 'Pending Dispatch'
+                status: 'new'
             };
 
             try {
@@ -6761,15 +6765,17 @@ Please confirm my delivery dispatch. Thank you!`;
                 localStorage.setItem('annapurna_orders', JSON.stringify(orders));
             } catch (err) {}
 
-            // 2b. Sync Order directly to Django Backend REST API
-            if (window.apiConfig) {
-                window.apiConfig.postOrder(orderRecord).catch(err => console.log('Backend API sync offline, order stored locally.', err));
-            } else {
-                fetch('http://127.0.0.1:8000/api/orders/', {
+            // 2b. Sync Order directly to Django Backend REST API BEFORE opening WhatsApp
+            try {
+                const postPromise = window.apiConfig ? window.apiConfig.postOrder(orderRecord) : fetch('/api/orders/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderRecord)
-                }).catch(err => console.log('Backend API sync offline, order stored locally.', err));
+                });
+                const timeoutPromise = new Promise(resolve => setTimeout(resolve, 1500));
+                await Promise.race([postPromise, timeoutPromise]);
+            } catch (err) {
+                console.log('Backend API sync offline or timeout, order stored locally.', err);
             }
 
             // 3. Clear Cart & Reset State Completely

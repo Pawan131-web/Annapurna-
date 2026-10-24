@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Confirm Delete Order — {{ order.order_number }}{% endblock %}
+{% block page_title %}Delete Order Request{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="section-card text-center p-4">
+      <div style="font-size:3rem; color:#ef4444; margin-bottom:1rem;">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <h4 style="font-weight:700; color:var(--text-main);">Delete Order Request?</h4>
+      <p class="text-muted" style="font-size:0.9rem;">
+        Are you sure you want to delete order request <strong class="text-light">{{ order.order_number }}</strong> for customer <strong class="text-light">{{ order.customer_name }}</strong>?
+        This action cannot be undone.
+      </p>
+
+      <form method="post" class="mt-4 d-flex justify-content-center gap-3">
+        {% csrf_token %}
+        <a href="{% url 'sales:order_list' %}" class="btn btn-outline-brand">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-danger">
+          <i class="bi bi-trash me-1"></i> Yes, Delete Order
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

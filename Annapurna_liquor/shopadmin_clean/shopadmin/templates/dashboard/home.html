@@ -84,8 +84,8 @@
         <h3 class="section-title">Sales Overview</h3>
         <div class="chart-controls">
           <div class="chart-legend">
-            <div class="legend-item"><span class="legend-dot" style="background:#D4A359;"></span> Revenue</div>
-            <div class="legend-item"><span class="legend-dot" style="background:#52C478;"></span> Orders</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--accent);"></span> Revenue</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--chart-series-2, #10B981);"></span> Orders</div>
           </div>
           <div class="time-pills">
             <button class="time-pill-btn active" data-range="7d" type="button">7 Days</button>
@@ -127,14 +127,14 @@
           {% empty %}
           <div class="donut-legend-row">
             <div class="donut-legend-left">
-              <span class="legend-dot" style="background:#D4A359;"></span>
+              <span class="legend-dot" style="background:var(--accent);"></span>
               <span>Liquor</span>
             </div>
             <span class="donut-legend-percent">0%</span>
           </div>
           <div class="donut-legend-row">
             <div class="donut-legend-left">
-              <span class="legend-dot" style="background:#52C478;"></span>
+              <span class="legend-dot" style="background:var(--chart-series-2, #10B981);"></span>
               <span>Grocery</span>
             </div>
             <span class="donut-legend-percent">0%</span>
@@ -308,20 +308,28 @@ document.querySelector('.donut-center-value').innerText = categoryData.total_dis
 // Render Sales Overview Dual-Line Area Chart
 const ctxOverview = document.getElementById('salesOverviewChart').getContext('2d');
 
-const gradientGold = ctxOverview.createLinearGradient(0, 0, 0, 230);
-gradientGold.addColorStop(0, 'rgba(212, 163, 89, 0.35)');
-gradientGold.addColorStop(1, 'rgba(212, 163, 89, 0.0)');
-
-const gradientEmerald = ctxOverview.createLinearGradient(0, 0, 0, 230);
-gradientEmerald.addColorStop(0, 'rgba(82, 196, 120, 0.25)');
-gradientEmerald.addColorStop(1, 'rgba(82, 196, 120, 0.0)');
-
-function getThemeGridColor() {
-  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(18, 21, 24, 0.06)';
+function getThemeColors() {
+  const isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+  return {
+    isDark: isDark,
+    accent: isDark ? '#D4AF5A' : '#C9A24B',
+    series2: '#10B981',
+    grid: isDark ? '#1F1D1A' : '#E5E0D3',
+    axisText: isDark ? '#B8B0A2' : '#4B5563',
+    cardBg: isDark ? '#000000' : '#FFFFFF',
+    textPrimary: isDark ? '#F3EFE6' : '#1F2937',
+  };
 }
 
-const isInitialDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
-const initialTickColor = isInitialDark ? '#8C93A0' : '#69707D';
+let themeCols = getThemeColors();
+
+const gradientGold = ctxOverview.createLinearGradient(0, 0, 0, 230);
+gradientGold.addColorStop(0, 'rgba(201, 162, 75, 0.35)');
+gradientGold.addColorStop(1, 'rgba(201, 162, 75, 0.0)');
+
+const gradientEmerald = ctxOverview.createLinearGradient(0, 0, 0, 230);
+gradientEmerald.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+gradientEmerald.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
 
 const overviewChart = new Chart(ctxOverview, {
   type: 'line',
@@ -331,13 +339,13 @@ const overviewChart = new Chart(ctxOverview, {
       {
         label: 'Revenue',
         data: initialOverview.revenue,
-        borderColor: '#D4A359',
+        borderColor: themeCols.accent,
         borderWidth: 2.5,
         backgroundColor: gradientGold,
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#E5C158',
-        pointBorderColor: '#121518',
+        pointBackgroundColor: themeCols.accent,
+        pointBorderColor: themeCols.cardBg,
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -346,13 +354,13 @@ const overviewChart = new Chart(ctxOverview, {
       {
         label: 'Orders',
         data: initialOverview.orders,
-        borderColor: '#52C478',
+        borderColor: themeCols.series2,
         borderWidth: 2.5,
         backgroundColor: gradientEmerald,
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#52C478',
-        pointBorderColor: '#121518',
+        pointBackgroundColor: themeCols.series2,
+        pointBorderColor: themeCols.cardBg,
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -366,10 +374,10 @@ const overviewChart = new Chart(ctxOverview, {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#121518',
-        titleColor: '#FAFAF7',
-        bodyColor: '#EDEDED',
-        borderColor: 'rgba(212, 163, 89, 0.45)',
+        backgroundColor: themeCols.cardBg,
+        titleColor: themeCols.textPrimary,
+        bodyColor: themeCols.textPrimary,
+        borderColor: themeCols.grid,
         borderWidth: 1,
         titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
         bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
@@ -389,14 +397,14 @@ const overviewChart = new Chart(ctxOverview, {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { color: initialTickColor, font: { family: 'Plus Jakarta Sans', size: 11 } }
+        ticks: { color: themeCols.axisText, font: { family: 'Plus Jakarta Sans', size: 11 } }
       },
       yRevenue: {
         type: 'linear',
         position: 'left',
-        grid: { color: getThemeGridColor() },
+        grid: { color: themeCols.grid },
         ticks: {
-          color: initialTickColor,
+          color: themeCols.axisText,
           font: { family: 'Plus Jakarta Sans', size: 11 },
           callback: function(val) {
             if (val >= 1000) return 'Rs. ' + (val / 1000) + 'K';
@@ -422,9 +430,9 @@ const donutChart = new Chart(ctxDonut, {
     labels: categoryData.labels.length ? categoryData.labels : ['Liquor', 'Grocery'],
     datasets: [{
       data: categoryData.data.length ? categoryData.data : [0, 0],
-      backgroundColor: categoryData.colors.length ? categoryData.colors : ['#D4A359', '#52C478'],
+      backgroundColor: categoryData.colors.length ? categoryData.colors : [themeCols.accent, themeCols.series2],
       borderWidth: 2,
-      borderColor: isInitialDark ? '#14171E' : '#FFFFFF',
+      borderColor: themeCols.cardBg,
       hoverOffset: 4
     }]
   },
@@ -435,10 +443,10 @@ const donutChart = new Chart(ctxDonut, {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#121518',
-        titleColor: '#FAFAF7',
-        bodyColor: '#EDEDED',
-        borderColor: 'rgba(212, 163, 89, 0.45)',
+        backgroundColor: themeCols.cardBg,
+        titleColor: themeCols.textPrimary,
+        bodyColor: themeCols.textPrimary,
+        borderColor: themeCols.grid,
         borderWidth: 1,
         titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
         bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
@@ -473,15 +481,27 @@ timePillBtns.forEach(btn => {
 });
 
 // Update Chart Colors dynamically on Theme Change
-document.addEventListener('themeChanged', (e) => {
-  const isDark = e.detail.theme === 'dark';
-  const tickColor = isDark ? '#8C93A0' : '#69707D';
-  overviewChart.options.scales.yRevenue.grid.color = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(18, 21, 24, 0.06)';
-  overviewChart.options.scales.x.ticks.color = tickColor;
-  overviewChart.options.scales.yRevenue.ticks.color = tickColor;
+document.addEventListener('themeChanged', () => {
+  const c = getThemeColors();
+
+  overviewChart.data.datasets[0].borderColor = c.accent;
+  overviewChart.data.datasets[0].pointBackgroundColor = c.accent;
+  overviewChart.data.datasets[0].pointBorderColor = c.cardBg;
+  overviewChart.data.datasets[1].pointBorderColor = c.cardBg;
+  overviewChart.options.scales.yRevenue.grid.color = c.grid;
+  overviewChart.options.scales.x.ticks.color = c.axisText;
+  overviewChart.options.scales.yRevenue.ticks.color = c.axisText;
+  overviewChart.options.plugins.tooltip.backgroundColor = c.cardBg;
+  overviewChart.options.plugins.tooltip.titleColor = c.textPrimary;
+  overviewChart.options.plugins.tooltip.bodyColor = c.textPrimary;
+  overviewChart.options.plugins.tooltip.borderColor = c.grid;
   overviewChart.update();
 
-  donutChart.data.datasets[0].borderColor = isDark ? '#14171E' : '#FFFFFF';
+  donutChart.data.datasets[0].borderColor = c.cardBg;
+  donutChart.options.plugins.tooltip.backgroundColor = c.cardBg;
+  donutChart.options.plugins.tooltip.titleColor = c.textPrimary;
+  donutChart.options.plugins.tooltip.bodyColor = c.textPrimary;
+  donutChart.options.plugins.tooltip.borderColor = c.grid;
   donutChart.update();
 });
 </script>

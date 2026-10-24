@@ -65,7 +65,6 @@
         html {
             scroll-behavior: smooth;
             background-color: var(--bg-footer, #121518);
-            overscroll-behavior-y: none;
         }
 
         body {
@@ -75,7 +74,6 @@
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            overscroll-behavior-y: none;
         }
 
         a {
@@ -2576,6 +2574,7 @@
                         <input type="text" id="checkoutCustName" class="checkout-input" placeholder="Full Name *" required />
                         <input type="tel" id="checkoutCustPhone" class="checkout-input" placeholder="Phone Number (+977) *" required />
                     </div>
+                    <input type="email" id="checkoutCustEmail" class="checkout-input mt-2" placeholder="Email Address (Optional)" />
                     <input type="text" id="checkoutCustAddress" class="checkout-input mt-2" placeholder="Delivery Address / Area (e.g., Baneshwor, Kathmandu) *" required />
                 </div>
 
@@ -2663,21 +2662,21 @@
         // Grocery Essentials Products Database
         const groceryProducts = [
             { id: 101, name: "Organic Wild Himalayan Honey (500g)", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 1,850", priceRaw: 1850, rating: "5.0", badge: "Organic Certified", img: "asstes/website-designs/grocries/gm-23ed737a-a2a5-4ce4-995e-9426e7bacf3a-groceries.jpeg", brandKey: "himalayan-organics", highlightKey: "organic-cert" },
-            { id: 102, name: "Gourmet Roasted Nuts & Dried Fruits Pack (1kg)", catKey: "snacks", catName: "Snacks", price: "Rs. 650", priceRaw: 650, rating: "4.9", badge: "Grocery Essential", img: "asstes/website-designs/alcohol design/classics_tobacco.png", brandKey: "annapurna-farm", highlightKey: "grocery-essential" },
-            { id: 103, name: "Premium Packaged Breakfast Cereal & Oats", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 420", priceRaw: 420, rating: "4.8", badge: "Daily Essential", img: "asstes/website-designs/alcohol design/classics_gin.png", brandKey: "goldstar-pantry", highlightKey: "best-selling" },
-            { id: 104, name: "Artisanal Whole Wheat Toast & Sourdough Crackers", catKey: "biscuits-cookies", catName: "Biscuits & Cookies", price: "Rs. 350", priceRaw: 350, rating: "4.9", badge: "Freshly Baked", img: "asstes/website-designs/alcohol design/classics_spirits.png", brandKey: "annapurna-bakery", highlightKey: "top-rated" },
-            { id: 105, name: "Premium Himalayan Aged Basmati Rice (5kg)", catKey: "rice-grains", catName: "Rice & Grains", price: "Rs. 1,450", priceRaw: 1450, rating: "5.0", badge: "Best Seller", img: "asstes/website-designs/grocries/R.jpg", brandKey: "goldstar-pantry", highlightKey: "best-selling" },
-            { id: 106, name: "Organic Kashmiri Saffron & Cardamom Pack", catKey: "spices-masala", catName: "Spices & Masala", price: "Rs. 2,200", priceRaw: 2200, rating: "5.0", badge: "Gourmet Grade", img: "asstes/website-designs/grocries/supermarket_cart.jpeg", brandKey: "himalayan-organics", highlightKey: "top-rated" },
-            { id: 107, name: "Cold Pressed Extra Virgin Mustard Oil (2L)", catKey: "cooking-oil", catName: "Cooking Oil", price: "Rs. 780", priceRaw: 780, rating: "4.7", badge: "Pure & Natural", img: "asstes/website-designs/grocries/R.jpg", brandKey: "goldstar-pantry", highlightKey: "best-selling" },
-            { id: 108, name: "Dried Fruit & Nut Mix Family Pack (1.5kg)", catKey: "snacks", catName: "Snacks", price: "Rs. 520", priceRaw: 520, rating: "4.9", badge: "Grocery Essential", img: "asstes/website-designs/alcohol design/red_wine_grapes.jpg", brandKey: "annapurna-farm", highlightKey: "grocery-essential" },
-            { id: 109, name: "Himalayan Whole Grain Oatmeal & Cereal Pack", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 550", priceRaw: 550, rating: "4.9", badge: "High Fiber", img: "asstes/website-designs/alcohol design/wine_closeup.jpg", brandKey: "annapurna-farm", highlightKey: "top-rated" },
-            { id: 110, name: "Pure Yak Ghee Himalayan Tradition (500g)", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 1,650", priceRaw: 1650, rating: "5.0", badge: "Traditional", img: "asstes/website-designs/alcohol design/classics_spirits.png", brandKey: "himalayan-organics", highlightKey: "top-rated" },
-            { id: 111, name: "Natural Sparkling Spring Mineral Water (Case of 12)", catKey: "soft-drinks", catName: "Soft Drinks & Beverages", price: "Rs. 960", priceRaw: 960, rating: "4.8", badge: "Pure Mineral", img: "asstes/website-designs/alcohol design/classics_gin.png", brandKey: "himalayan-organics", highlightKey: "on-sale" },
-            { id: 112, name: "Handcrafted Dark Chocolate Truffles (250g)", catKey: "chocolates", catName: "Chocolates & Confectionery", price: "Rs. 890", priceRaw: 890, rating: "4.9", badge: "Artisanal", img: "asstes/website-designs/alcohol design/classics_tobacco.png", brandKey: "annapurna-bakery", highlightKey: "top-rated" },
-            { id: 113, name: "Organic Green Tea Leaves & Chamomile (200g)", catKey: "tea-coffee", catName: "Tea & Coffee", price: "Rs. 480", priceRaw: 480, rating: "4.8", badge: "Organic Certified", img: "asstes/website-designs/alcohol design/red_wine_grapes.jpg", brandKey: "himalayan-organics", highlightKey: "organic-cert" },
-            { id: 114, name: "Organic Dried Herb & Spice Seasoning Pack", catKey: "spices-masala", catName: "Spices & Masala", price: "Rs. 280", priceRaw: 280, rating: "4.7", badge: "Grocery Essential", img: "asstes/website-designs/alcohol design/red_wine_grapes.jpg", brandKey: "annapurna-farm", highlightKey: "grocery-essential" },
-            { id: 115, name: "Packaged Danish Pastries & Biscuits Box", catKey: "biscuits-cookies", catName: "Biscuits & Cookies", price: "Rs. 580", priceRaw: 580, rating: "5.0", badge: "Freshly Sealed", img: "asstes/website-designs/hero_liquor.png", brandKey: "annapurna-bakery", highlightKey: "best-selling" },
-            { id: 116, name: "Premium Organic Quinoa & Oats (1kg)", catKey: "rice-grains", catName: "Rice & Grains", price: "Rs. 920", priceRaw: 920, rating: "4.8", badge: "Superfood", img: "asstes/website-designs/alcohol design/classics_tobacco.png", brandKey: "goldstar-pantry", highlightKey: "top-rated" }
+            { id: 102, name: "Gourmet Roasted Nuts & Dried Fruits Pack (1kg)", catKey: "snacks", catName: "Snacks", price: "Rs. 650", priceRaw: 650, rating: "4.9", badge: "Grocery Essential", img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg", brandKey: "annapurna-farm", highlightKey: "grocery-essential" },
+            { id: 103, name: "Premium Packaged Breakfast Cereal & Oats", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 420", priceRaw: 420, rating: "4.8", badge: "Daily Essential", img: "asstes/website-designs/grocries/classics_packaged_foods.jpg", brandKey: "goldstar-pantry", highlightKey: "best-selling" },
+            { id: 104, name: "Artisanal Whole Wheat Toast & Sourdough Crackers", catKey: "biscuits-cookies", catName: "Biscuits & Cookies", price: "Rs. 350", priceRaw: 350, rating: "4.9", badge: "Freshly Baked", img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg", brandKey: "annapurna-bakery", highlightKey: "top-rated" },
+            { id: 105, name: "Premium Himalayan Aged Basmati Rice (5kg)", catKey: "rice-grains", catName: "Rice & Grains", price: "Rs. 1,450", priceRaw: 1450, rating: "5.0", badge: "Best Seller", img: "asstes/website-designs/grocries/classics_rice_grains.jpg", brandKey: "goldstar-pantry", highlightKey: "best-selling" },
+            { id: 106, name: "Organic Kashmiri Saffron & Cardamom Pack", catKey: "spices-masala", catName: "Spices & Masala", price: "Rs. 2,200", priceRaw: 2200, rating: "5.0", badge: "Gourmet Grade", img: "asstes/website-designs/grocries/classics_packaged_foods.jpg", brandKey: "himalayan-organics", highlightKey: "top-rated" },
+            { id: 107, name: "Cold Pressed Extra Virgin Mustard Oil (2L)", catKey: "cooking-oil", catName: "Cooking Oil", price: "Rs. 780", priceRaw: 780, rating: "4.7", badge: "Pure & Natural", img: "asstes/website-designs/grocries/classics_packaged_foods.jpg", brandKey: "goldstar-pantry", highlightKey: "best-selling" },
+            { id: 108, name: "Dried Fruit & Nut Mix Family Pack (1.5kg)", catKey: "snacks", catName: "Snacks", price: "Rs. 520", priceRaw: 520, rating: "4.9", badge: "Grocery Essential", img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg", brandKey: "annapurna-farm", highlightKey: "grocery-essential" },
+            { id: 109, name: "Himalayan Whole Grain Oatmeal & Cereal Pack", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 550", priceRaw: 550, rating: "4.9", badge: "High Fiber", img: "asstes/website-designs/grocries/classics_packaged_foods.jpg", brandKey: "annapurna-farm", highlightKey: "top-rated" },
+            { id: 110, name: "Pure Yak Ghee Himalayan Tradition (500g)", catKey: "packaged-foods", catName: "Packaged Foods", price: "Rs. 1,650", priceRaw: 1650, rating: "5.0", badge: "Traditional", img: "asstes/website-designs/grocries/classics_packaged_foods.jpg", brandKey: "himalayan-organics", highlightKey: "top-rated" },
+            { id: 111, name: "Natural Sparkling Spring Mineral Water (Case of 12)", catKey: "soft-drinks", catName: "Soft Drinks & Beverages", price: "Rs. 960", priceRaw: 960, rating: "4.8", badge: "Pure Mineral", img: "asstes/website-designs/grocries/Make_milk_webpage_image_2K_202608122119.jpeg", brandKey: "himalayan-organics", highlightKey: "on-sale" },
+            { id: 112, name: "Handcrafted Dark Chocolate Truffles (250g)", catKey: "chocolates", catName: "Chocolates & Confectionery", price: "Rs. 890", priceRaw: 890, rating: "4.9", badge: "Artisanal", img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg", brandKey: "annapurna-bakery", highlightKey: "top-rated" },
+            { id: 113, name: "Organic Green Tea Leaves & Chamomile (200g)", catKey: "tea-coffee", catName: "Tea & Coffee", price: "Rs. 480", priceRaw: 480, rating: "4.8", badge: "Organic Certified", img: "asstes/website-designs/grocries/fresh_vegetables.png", brandKey: "himalayan-organics", highlightKey: "organic-cert" },
+            { id: 114, name: "Organic Dried Herb & Spice Seasoning Pack", catKey: "spices-masala", catName: "Spices & Masala", price: "Rs. 280", priceRaw: 280, rating: "4.7", badge: "Grocery Essential", img: "asstes/website-designs/grocries/classics_packaged_foods.jpg", brandKey: "annapurna-farm", highlightKey: "grocery-essential" },
+            { id: 115, name: "Packaged Danish Pastries & Biscuits Box", catKey: "biscuits-cookies", catName: "Biscuits & Cookies", price: "Rs. 580", priceRaw: 580, rating: "5.0", badge: "Freshly Sealed", img: "asstes/website-designs/grocries/classics_snacks_sweets.jpg", brandKey: "annapurna-bakery", highlightKey: "best-selling" },
+            { id: 116, name: "Premium Organic Quinoa & Oats (1kg)", catKey: "rice-grains", catName: "Rice & Grains", price: "Rs. 920", priceRaw: 920, rating: "4.8", badge: "Superfood", img: "asstes/website-designs/grocries/classics_rice_grains.jpg", brandKey: "goldstar-pantry", highlightKey: "top-rated" }
         ];
 
         // Header Hide/Show on Scroll
@@ -3287,9 +3286,11 @@
             if (savedUser) {
                 const nameInp = document.getElementById('checkoutCustName');
                 const phoneInp = document.getElementById('checkoutCustPhone');
+                const emailInp = document.getElementById('checkoutCustEmail');
                 const addrInp = document.getElementById('checkoutCustAddress');
                 if (nameInp && savedUser.name && !nameInp.value) nameInp.value = savedUser.name;
                 if (phoneInp && savedUser.phone && !phoneInp.value) phoneInp.value = savedUser.phone;
+                if (emailInp && savedUser.email && !emailInp.value) emailInp.value = savedUser.email;
                 if (addrInp && savedUser.address && !addrInp.value) addrInp.value = savedUser.address;
             }
 
@@ -3329,13 +3330,15 @@
             if (s3) s3.style.display = 'none';
         }
 
-        function confirmAndPlaceOrder() {
+        async function confirmAndPlaceOrder() {
             const nameInp = document.getElementById('checkoutCustName');
             const phoneInp = document.getElementById('checkoutCustPhone');
+            const emailInp = document.getElementById('checkoutCustEmail');
             const addrInp = document.getElementById('checkoutCustAddress');
 
             const custName = nameInp ? nameInp.value.trim() : '';
             const custPhone = phoneInp ? phoneInp.value.trim() : '';
+            const custEmail = emailInp ? emailInp.value.trim() : '';
             const custAddress = addrInp ? addrInp.value.trim() : '';
 
             if (!custName || !custPhone || !custAddress) {
@@ -3386,13 +3389,14 @@ Please confirm my delivery dispatch. Thank you!`;
                 customer: {
                     name: custName,
                     phone: custPhone,
+                    email: custEmail,
                     address: custAddress
                 },
                 items: currentOrderItems,
                 total: currentOrderTotal,
                 formattedTotal: formattedTotal,
                 paymentMethod: 'Cash on Delivery (COD)',
-                status: 'Pending Dispatch'
+                status: 'new'
             };
 
             try {
@@ -3401,15 +3405,17 @@ Please confirm my delivery dispatch. Thank you!`;
                 localStorage.setItem('annapurna_orders', JSON.stringify(orders));
             } catch (err) { }
 
-            // 2b. Sync Order directly to Django Backend REST API
-            if (window.apiConfig) {
-                window.apiConfig.postOrder(orderRecord).catch(err => console.log('Backend API sync offline, order stored locally.', err));
-            } else {
-                fetch('http://127.0.0.1:8000/api/orders/', {
+            // 2b. Sync Order directly to Django Backend REST API BEFORE opening WhatsApp
+            try {
+                const postPromise = window.apiConfig ? window.apiConfig.postOrder(orderRecord) : fetch('/api/orders/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderRecord)
-                }).catch(err => console.log('Backend API sync offline, order stored locally.', err));
+                });
+                const timeoutPromise = new Promise(resolve => setTimeout(resolve, 1500));
+                await Promise.race([postPromise, timeoutPromise]);
+            } catch (err) {
+                console.log('Backend API sync offline or timeout, order stored locally.', err);
             }
 
             // 3. Clear Cart & Reset State Completely

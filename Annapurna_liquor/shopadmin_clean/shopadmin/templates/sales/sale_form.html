@@ -26,16 +26,16 @@
     color: var(--text-main) !important;
   }
   .ts-dropdown .option.active, .ts-dropdown .option:hover {
-    background-color: var(--accent-soft) !important;
-    color: var(--accent) !important;
+    background-color: rgba(201, 162, 75, 0.12) !important;
+    color: var(--accent-text) !important;
   }
-  [data-theme="dark"] .ts-control input { color: #fff !important; }
+  .ts-control input { color: var(--text-primary) !important; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="section-card" style="max-width:900px; margin: 0 auto;">
-  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom" style="border-color:var(--border) !important;">
     <h3 class="section-title mb-0">Record New Sale</h3>
     <a href="{% url 'sales:list' %}" class="btn btn-outline-brand btn-sm"><i class="bi bi-arrow-left me-1"></i>Back to Sales</a>
   </div>
@@ -63,10 +63,10 @@
     </div>
 
     <!-- Items Section -->
-    <div class="card-surface p-3 mb-4">
+    <div class="card-surface p-3 mb-4" style="background:var(--page-bg); border:1px solid var(--border); border-radius:12px;">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0 fw-bold" style="font-size: 1rem; color:var(--text-main);">Items Sold</h5>
-        <span class="badge bg-light text-dark border fw-semibold">Available Products: {{ active_products|length }}</span>
+        <h5 class="mb-0 fw-bold" style="font-size: 1rem; color:var(--text-primary);">Items Sold</h5>
+        <span class="pill pill-muted">Available Products: {{ active_products|length }}</span>
       </div>
 
       {{ formset.management_form }}

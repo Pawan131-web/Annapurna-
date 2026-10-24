@@ -79,20 +79,24 @@ class SaleItem(models.Model):
         return self.unit_cost * self.quantity
 
 
+import re
+from urllib.parse import quote
+
+
 class OnlineOrder(models.Model):
     class Status(models.TextChoices):
-        PENDING = 'pending', 'Pending Dispatch'
-        CONFIRMED = 'confirmed', 'Confirmed'
-        DISPATCHED = 'dispatched', 'Out for Delivery'
-        DELIVERED = 'delivered', 'Delivered'
+        NEW = 'new', 'New'
+        CONTACTED = 'contacted', 'Contacted'
+        COMPLETED = 'completed', 'Completed'
         CANCELLED = 'cancelled', 'Cancelled'
 
-    order_number = models.CharField(max_length=32, unique=True)
+    order_number = models.CharField(max_length=64, unique=True)
     customer_name = models.CharField(max_length=150)
     customer_phone = models.CharField(max_length=30)
-    delivery_address = models.TextField()
-    payment_method = models.CharField(max_length=50, default='Cash on Delivery (COD)')
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    customer_email = models.CharField(max_length=150, blank=True, default='')
+    delivery_address = models.TextField(blank=True, default='')
+    payment_method = models.CharField(max_length=50, default='WhatsApp Order / Direct')
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.NEW)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -104,18 +108,53 @@ class OnlineOrder(models.Model):
     def __str__(self):
         return f'{self.order_number} - {self.customer_name}'
 
+    @property
+    def total_quantity(self):
+        return sum((item.quantity for item in self.items.all()), 0)
+
+    def get_status_badge_class(self):
+        mapping = {
+            self.Status.NEW: 'pill pill-brand',
+            self.Status.CONTACTED: 'pill pill-warn',
+            self.Status.COMPLETED: 'pill pill-success',
+            self.Status.CANCELLED: 'pill pill-danger',
+        }
+        return mapping.get(self.status, 'pill pill-muted')
+
+    def get_clean_phone(self):
+        digits = re.sub(r'[^0-9]', '', self.customer_phone or '')
+        if len(digits) == 10 and digits.startswith('9'):
+            return f'977{digits}'
+        return digits
+
+    def get_whatsapp_url(self):
+        clean_num = self.get_clean_phone()
+        if not clean_num:
+            return '#'
+        msg = f"Hello {self.customer_name}! This is Annapurna Store following up on your order request ({self.order_number})."
+        return f"https://wa.me/{clean_num}?text={quote(msg)}"
+
 
 class OnlineOrderItem(models.Model):
     order = models.ForeignKey(OnlineOrder, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey('products.Product', on_delete=models.SET_NULL, null=True, blank=True)
     product_name = models.CharField(max_length=200)
+    product_image = models.CharField(max_length=500, blank=True, default='')
     quantity = models.PositiveIntegerField(default=1)
-    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
 
     @property
     def line_total(self):
         return self.unit_price * self.quantity
 
+    def get_image_url(self):
+        if self.product_image:
+            return self.product_image
+        if self.product and self.product.primary_image:
+            return self.product.primary_image.url
+        return '/static/img/no-image.png'
+
     def __str__(self):
         return f'{self.product_name} x{self.quantity}'
+
 
