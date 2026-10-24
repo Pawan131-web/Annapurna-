@@ -9,6 +9,17 @@
         // Synchronous Zero-Latency Pre-hydration Engine
         (function() {
             try {
+                function _norm(str) {
+                    if (!str) return '';
+                    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+                }
+                function _isMatch(a, b) {
+                    if (!a || !b) return false;
+                    const na = _norm(a), nb = _norm(b);
+                    if (!na || !nb) return false;
+                    return na === nb || na.includes(nb) || nb.includes(na);
+                }
+
                 const params = new URLSearchParams(window.location.search);
                 const pId = params.get('id') ? parseInt(params.get('id')) : null;
                 const pType = params.get('type') || '';
@@ -19,16 +30,28 @@
                     cached = JSON.parse(localStorage.getItem('annapurna_selected_product'));
                 } catch(e) {}
 
-                const isSame = (cached && ((pId && cached.id == pId) || (!pId && pName && cached.name === pName)));
-                const isGrocery = (pType === 'grocery') || (isSame && (cached.department === 'grocery' || cached.type === 'grocery'));
+                let isValidCache = false;
+                if (cached) {
+                    const cachedType = cached.type || cached.department || '';
+                    const typeMatch = !pType || !cachedType || (pType === cachedType);
+                    const nameMatch = pName ? _isMatch(cached.name, pName) : true;
+                    const idMatch = pId ? (cached.id == pId) : true;
+                    if (pName) {
+                        isValidCache = nameMatch && typeMatch;
+                    } else if (pId) {
+                        isValidCache = idMatch && typeMatch;
+                    }
+                }
+
+                const isGrocery = (pType === 'grocery') || (isValidCache && (cached.type === 'grocery' || cached.department === 'grocery'));
 
                 window.__PDP_PREHYDRATED__ = {
-                    id: pId || (isSame ? cached.id : null),
-                    name: (isSame && cached.name) ? cached.name : pName,
-                    price: (isSame && (cached.priceRaw || cached.price)) ? (cached.priceRaw || cached.price) : null,
-                    img: (isSame && cached.img) ? cached.img : '',
+                    id: (isValidCache && cached.id) ? cached.id : pId,
+                    name: pName || (isValidCache && cached.name ? cached.name : ''),
+                    price: (isValidCache && (cached.priceRaw || cached.price)) ? (cached.priceRaw || cached.price) : null,
+                    img: (isValidCache && cached.img) ? cached.img : '',
                     isGrocery: isGrocery,
-                    category: (isSame && cached.cat) ? cached.cat : ''
+                    category: (isValidCache && cached.cat) ? cached.cat : ''
                 };
 
                 if (window.__PDP_PREHYDRATED__.name) {
@@ -8674,12 +8697,7 @@
                 return idStr ? parseInt(idStr) : null;
             }
 
-            function navigateToProductDetail(id, type) {
-                try {
-                    localStorage.setItem('annapurna_selected_product', JSON.stringify({ id: id, type: type }));
-                } catch (e) {}
-                window.location.href = `product-detail.html?id=${id}&type=${type}`;
-            }
+
 
             // Core Page Loader
             
@@ -8750,6 +8768,14 @@
                     .replace(/[^a-z0-9]/g, '');
             }
 
+            function isNameMatch(a, b) {
+                if (!a || !b) return false;
+                const na = normalizeText(a);
+                const nb = normalizeText(b);
+                if (!na || !nb) return false;
+                return na === nb || na.includes(nb) || nb.includes(na);
+            }
+
             function navigateToProductDetail(id, type, name) {
                 try {
                     localStorage.setItem('annapurna_selected_product', JSON.stringify({ id: id, type: type, name: name }));
@@ -8766,19 +8792,44 @@
 
                 let storedProduct = null;
                 try {
-                    storedProduct = JSON.parse(localStorage.getItem('annapurna_selected_product'));
-                    if (storedProduct) {
-                        if (!pId && storedProduct.id) pId = parseInt(storedProduct.id);
-                        if (!typeParam && (storedProduct.type || storedProduct.department)) typeParam = storedProduct.type || storedProduct.department;
-                        if (!nameParam && storedProduct.name) nameParam = storedProduct.name;
+                    const rawStored = JSON.parse(localStorage.getItem('annapurna_selected_product'));
+                    if (rawStored) {
+                        const sType = rawStored.type || rawStored.department || '';
+                        const typeMatch = !typeParam || !sType || (typeParam === sType);
+                        const nameMatch = nameParam ? isNameMatch(rawStored.name, nameParam) : true;
+                        const idMatch = pId ? (rawStored.id == pId) : true;
+                        
+                        // Stored product is only valid if department and name don't contradict the URL
+                        if ((nameParam && nameMatch && typeMatch) || (!nameParam && pId && idMatch && typeMatch)) {
+                            storedProduct = rawStored;
+                            if (!typeParam && sType) typeParam = sType;
+                            if (!nameParam && storedProduct.name) nameParam = storedProduct.name;
+                        }
                     }
                 } catch (e) {}
 
                 let isGrocery = (typeParam === 'grocery');
                 let found = null;
+                const searchName = nameParam || (storedProduct && storedProduct.name) || '';
 
-                // 1. Instant Cache-First: If matching item is in localStorage, use immediately (0ms lag)
-                if (storedProduct && ((pId && storedProduct.id == pId) || (nameParam && storedProduct.name === nameParam))) {
+                // 1. Instant Name Match in Primary Catalog (Exact user intent, 0ms latency)
+                if (searchName) {
+                    const primaryCatalog = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
+                    const match = primaryCatalog.find(p => isNameMatch(p.name, searchName));
+                    if (match) {
+                        found = match;
+                    } else if (!typeParam) {
+                        const secondaryCatalog = isGrocery ? PRODUCTS_DATA : GROCERY_PRODUCTS_DATA;
+                        const altMatch = secondaryCatalog.find(p => isNameMatch(p.name, searchName));
+                        if (altMatch) {
+                            found = altMatch;
+                            isGrocery = !isGrocery;
+                        }
+                    }
+                }
+
+                // 2. Cache-First if validated
+                if (!found && storedProduct && storedProduct.name) {
                     const cleanPrice = storedProduct.priceRaw || parseInt(String(storedProduct.price).replace(/[^0-9]/g, '')) || 0;
                     found = {
                         id: storedProduct.id || pId,
@@ -8802,43 +8853,16 @@
                     };
                 }
 
-                // 2. Instant Static Catalog Match
+                // 3. Static Catalog Match by ID (Only if no contradictory searchName)
                 if (!found && pId) {
-                    if (isGrocery) {
-                        found = GROCERY_PRODUCTS_DATA.find(p => p.id === pId);
-                        if (!found && !typeParam) {
-                            found = PRODUCTS_DATA.find(p => p.id === pId);
-                            if (found) isGrocery = false;
-                        }
-                    } else {
-                        found = PRODUCTS_DATA.find(p => p.id === pId);
-                        if (!found && (pId >= 100 || !typeParam)) {
-                            found = GROCERY_PRODUCTS_DATA.find(p => p.id === pId);
-                            if (found) isGrocery = true;
-                        }
+                    const primaryCatalog = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
+                    const idMatch = primaryCatalog.find(p => p.id === pId);
+                    if (idMatch && (!searchName || isNameMatch(idMatch.name, searchName))) {
+                        found = idMatch;
                     }
                 }
 
-                // 3. Name Matching
-                const searchName = nameParam || (storedProduct && storedProduct.name);
-                if (!found && searchName) {
-                    const normSearch = normalizeText(searchName);
-                    const firstList = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
-                    const secondList = isGrocery ? PRODUCTS_DATA : GROCERY_PRODUCTS_DATA;
-
-                    let nameFound = firstList.find(p => normalizeText(p.name) === normSearch || normSearch.includes(normalizeText(p.name)) || normalizeText(p.name).includes(normSearch));
-                    if (nameFound) {
-                        found = nameFound;
-                    } else {
-                        nameFound = secondList.find(p => normalizeText(p.name) === normSearch || normSearch.includes(normalizeText(p.name)) || normalizeText(p.name).includes(normSearch));
-                        if (nameFound) {
-                            found = nameFound;
-                            isGrocery = !isGrocery;
-                        }
-                    }
-                }
-
-                // If found from cache or static, render immediately to eliminate any visual delay
+                // If found from cache or static, render immediately to eliminate visual delay (0ms)
                 if (found) {
                     applyProductToDOM(found, isGrocery);
                 }
@@ -8859,41 +8883,95 @@
 
                 // B: Related recommendations from API
                 const dept = isGrocery ? 'grocery' : 'liquor';
+                const effectiveName = searchName || (found && found.name) || '';
                 fetchPromises.push(
-                    fetch(`/api/products/related/?product_id=${pId || ''}&name=${encodeURIComponent(searchName || '')}&department=${dept}`)
+                    fetch(`/api/products/related/?product_id=${pId || ''}&name=${encodeURIComponent(effectiveName)}&department=${dept}`)
                         .then(r => r.ok ? r.json() : [])
                         .catch(() => [])
                 );
 
                 const [apiProduct, relatedProducts] = await Promise.all(fetchPromises);
 
-                // If fresh product data received from server, update DOM seamlessly
+                // If fresh product data received from server, ONLY apply if it is a genuine match!
+                // Never allow DB product ID collisions to overwrite an unrelated catalog product!
+                let appliedApi = false;
                 if (apiProduct && apiProduct.name) {
-                    isGrocery = (apiProduct.department === 'grocery');
-                    const cleanPrice = parseInt(apiProduct.selling_price) || 0;
-                    const imgPrimary = (apiProduct.images && apiProduct.images[0]) ? apiProduct.images[0].image : (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png');
-                    found = {
-                        id: apiProduct.id,
-                        name: apiProduct.name,
-                        category: apiProduct.category ? apiProduct.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
-                        cat: apiProduct.category ? apiProduct.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
-                        brand: apiProduct.brand || 'Annapurna Selection',
-                        country: apiProduct.origin || 'Nepal',
-                        img: imgPrimary,
-                        priceRaw: cleanPrice,
-                        minPrice: cleanPrice,
-                        maxPrice: cleanPrice,
-                        priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
-                        sizeDisplay: apiProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
-                        hasMultipleSizes: false,
-                        variants: [],
-                        desc: apiProduct.description || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
-                        rating: apiProduct.rating || '4.9',
-                        reviews: 50,
-                        gallery: (apiProduct.images && apiProduct.images.length > 0) ? apiProduct.images.map(i => i.image) : [imgPrimary]
-                    };
-                    applyProductToDOM(found, isGrocery);
-                } else if (!found) {
+                    const isApiGrocery = (apiProduct.department === 'grocery');
+                    let isTrueMatch = false;
+
+                    if (effectiveName) {
+                        isTrueMatch = isNameMatch(apiProduct.name, effectiveName);
+                    } else if (found) {
+                        isTrueMatch = isNameMatch(apiProduct.name, found.name);
+                    } else {
+                        isTrueMatch = (apiProduct.id === pId) && (!typeParam || isGrocery === isApiGrocery);
+                    }
+
+                    if (isTrueMatch) {
+                        appliedApi = true;
+                        isGrocery = isApiGrocery;
+                        const cleanPrice = parseInt(apiProduct.selling_price) || 0;
+                        const imgPrimary = (apiProduct.images && apiProduct.images[0]) ? apiProduct.images[0].image : (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png');
+                        found = {
+                            id: apiProduct.id,
+                            name: apiProduct.name,
+                            category: apiProduct.category ? apiProduct.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                            cat: apiProduct.category ? apiProduct.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                            brand: apiProduct.brand || 'Annapurna Selection',
+                            country: apiProduct.origin || 'Nepal',
+                            img: imgPrimary,
+                            priceRaw: cleanPrice,
+                            minPrice: cleanPrice,
+                            maxPrice: cleanPrice,
+                            priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
+                            sizeDisplay: apiProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
+                            hasMultipleSizes: false,
+                            variants: [],
+                            desc: apiProduct.description || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
+                            rating: apiProduct.rating || '4.9',
+                            reviews: 50,
+                            gallery: (apiProduct.images && apiProduct.images.length > 0) ? apiProduct.images.map(i => i.image) : [imgPrimary]
+                        };
+                        applyProductToDOM(found, isGrocery);
+                    }
+                }
+
+                // If not found yet and we have a search name, check DB by name search
+                if (!found && effectiveName) {
+                    try {
+                        const searchRes = await fetch(`/api/products/?search=${encodeURIComponent(effectiveName)}`).then(r => r.ok ? r.json() : null);
+                        const searchList = searchRes ? (searchRes.results || searchRes) : [];
+                        const dbMatch = Array.isArray(searchList) ? searchList.find(p => isNameMatch(p.name, effectiveName)) : null;
+                        if (dbMatch) {
+                            isGrocery = (dbMatch.department === 'grocery');
+                            const cleanPrice = parseInt(dbMatch.selling_price) || 0;
+                            const imgPrimary = (dbMatch.images && dbMatch.images[0]) ? dbMatch.images[0].image : (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png');
+                            found = {
+                                id: dbMatch.id,
+                                name: dbMatch.name,
+                                category: dbMatch.category ? dbMatch.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                                cat: dbMatch.category ? dbMatch.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                                brand: dbMatch.brand || 'Annapurna Selection',
+                                country: dbMatch.origin || 'Nepal',
+                                img: imgPrimary,
+                                priceRaw: cleanPrice,
+                                minPrice: cleanPrice,
+                                maxPrice: cleanPrice,
+                                priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
+                                sizeDisplay: dbMatch.volume || (isGrocery ? '1 Pack' : '750ML'),
+                                hasMultipleSizes: false,
+                                variants: [],
+                                desc: dbMatch.description || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
+                                rating: dbMatch.rating || '4.9',
+                                reviews: 50,
+                                gallery: (dbMatch.images && dbMatch.images.length > 0) ? dbMatch.images.map(i => i.image) : [imgPrimary]
+                            };
+                            applyProductToDOM(found, isGrocery);
+                        }
+                    } catch (e) {}
+                }
+
+                if (!found) {
                     // Fallback to first item of catalog only if completely unfound
                     const fallbackSource = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
                     found = fallbackSource[0];

@@ -75,20 +75,28 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         from django.db.models import Case, When, Value, IntegerField
 
         p = None
-        if p_id:
-            try:
-                p = Product.objects.filter(id=int(p_id), is_deleted=False, status='active').select_related('category', 'category__parent').first()
-            except (ValueError, TypeError):
-                p = None
-
-        if not p and p_name:
+        if p_name:
             clean_name = p_name.strip()
             p = Product.objects.filter(name__iexact=clean_name, is_deleted=False, status='active').select_related('category', 'category__parent').first()
             if not p:
                 p = Product.objects.filter(name__icontains=clean_name, is_deleted=False, status='active').select_related('category', 'category__parent').first()
 
+        if not p and p_id:
+            try:
+                candidate = Product.objects.filter(id=int(p_id), is_deleted=False, status='active').select_related('category', 'category__parent').first()
+                if candidate:
+                    if not p_name:
+                        p = candidate
+                    else:
+                        c_clean = candidate.name.lower()
+                        n_clean = p_name.strip().lower()
+                        if c_clean in n_clean or n_clean in c_clean:
+                            p = candidate
+            except (ValueError, TypeError):
+                p = None
+
         # Determine target main category ('grocery' or 'liquor')
-        target_dept = p.department if (p and p.department) else (dept if dept in ('grocery', 'liquor') else None)
+        target_dept = dept if dept in ('grocery', 'liquor') else (p.department if (p and p.department) else None)
 
         # Rule 7: If main category is missing, safely return empty list to hide section
         if not target_dept:
