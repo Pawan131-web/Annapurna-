@@ -55,7 +55,7 @@ print("=" * 60)
 print("Press Ctrl+C anytime to stop the server.\n")
 
 try:
-    cmd = [python_exe, 'manage.py', 'runserver', '127.0.0.1:8000']
+    cmd = [python_exe, 'manage.py', 'runserver', '0.0.0.0:8000']
     subprocess.run(cmd, cwd=str(shopadmin_dir))
 except KeyboardInterrupt:
     print("\n👋 Server stopped.")
