@@ -36,8 +36,10 @@ def serve_storefront(request, path=''):
         
     response = django_static_serve(request, path, document_root=str(STOREFRONT_DIR))
     
-    # Zero-cache headers for dev iteration
-    if path.endswith(('.html', '.js', '.css')):
+    # Cache media assets for 1 day, while keeping HTML/JS/CSS fresh
+    if path.endswith(('.png', '.jpg', '.jpeg', '.webp', '.svg', '.woff2', '.ttf', '.mp4')):
+        response['Cache-Control'] = 'public, max-age=86400'
+    elif path.endswith(('.html', '.js', '.css')):
         response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response['Pragma'] = 'no-cache'
         response['Expires'] = '0'

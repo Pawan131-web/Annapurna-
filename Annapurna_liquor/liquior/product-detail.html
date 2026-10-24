@@ -4,7 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Macallan 18 Year Double Cask 750ML | Annapurna Liquors</title>
+    <title>Product Details | Annapurna Store</title>
+    <script>
+        // Synchronous Zero-Latency Pre-hydration Engine
+        (function() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const pId = params.get('id') ? parseInt(params.get('id')) : null;
+                const pType = params.get('type') || '';
+                const pName = params.get('name') || '';
+
+                let cached = null;
+                try {
+                    cached = JSON.parse(localStorage.getItem('annapurna_selected_product'));
+                } catch(e) {}
+
+                const isSame = (cached && ((pId && cached.id == pId) || (!pId && pName && cached.name === pName)));
+                const isGrocery = (pType === 'grocery') || (isSame && (cached.department === 'grocery' || cached.type === 'grocery'));
+
+                window.__PDP_PREHYDRATED__ = {
+                    id: pId || (isSame ? cached.id : null),
+                    name: (isSame && cached.name) ? cached.name : pName,
+                    price: (isSame && (cached.priceRaw || cached.price)) ? (cached.priceRaw || cached.price) : null,
+                    img: (isSame && cached.img) ? cached.img : '',
+                    isGrocery: isGrocery,
+                    category: (isSame && cached.cat) ? cached.cat : ''
+                };
+
+                if (window.__PDP_PREHYDRATED__.name) {
+                    document.title = window.__PDP_PREHYDRATED__.name + ' | Annapurna ' + (isGrocery ? 'Groceries' : 'Liquors');
+                }
+            } catch(e) {}
+        })();
+    </script>
 
     <!-- Google Fonts (Matching liquior.html) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +48,29 @@
     <link rel="stylesheet" href="theme.css">
 
     <style>
+        /* Instant Shimmer & Pre-hydration CSS */
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #F3EFE6 25%, #E8E0CE 50%, #F3EFE6 75%) !important;
+            background-size: 200% 100% !important;
+            animation: shimmerLoading 1.4s infinite !important;
+        }
+        body.dark-theme .skeleton-shimmer,
+        [data-theme="dark"] .skeleton-shimmer {
+            background: linear-gradient(90deg, #1C1917 25%, #2A2521 50%, #1C1917 75%) !important;
+            background-size: 200% 100% !important;
+        }
+        @keyframes shimmerLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .main-pdp-img-fade {
+            opacity: 0;
+            transition: opacity 0.22s ease-in-out;
+        }
+        .main-pdp-img-fade.loaded {
+            opacity: 1;
+        }
+
         /* ==========================================
            COLOR PALETTE & CSS VARIABLES (EXACT FROM LIQUIOR.HTML)
            ========================================== */
@@ -2896,53 +2951,29 @@
 
                 <!-- Left Column: Hero Image Canvas & Thumbnail Gallery -->
                 <div class="blueprint-image-box">
-                    <div class="blueprint-hero-canvas">
-                        <img id="mainProductImg" src="asstes/website-designs/hero_liquor.png"
-                            alt="The Macallan 18 Year Double Cask" />
+                    <div class="blueprint-hero-canvas skeleton-shimmer" id="pdpHeroCanvas">
+                        <img id="mainProductImg" class="main-pdp-img-fade" src="" alt="Loading..."
+                            onload="this.classList.add('loaded'); const c = document.getElementById('pdpHeroCanvas'); if (c) c.classList.remove('skeleton-shimmer');" />
                     </div>
 
-                    <!-- Thumbnails Carousel Strip with Working Switcher & Nav Arrows -->
-                    <div class="blueprint-thumb-carousel">
-                        <button class="blueprint-carousel-arrow" onclick="cycleThumbImage(-1)"
-                            aria-label="Previous image">‹</button>
-                        <div class="blueprint-thumb-card active"
-                            onclick="switchMainImage('asstes/website-designs/hero_liquor.png', this)">
-                            <img src="asstes/website-designs/hero_liquor.png" alt="View 1" />
-                        </div>
-                        <div class="blueprint-thumb-card"
-                            onclick="switchMainImage('asstes/website-designs/alcohol design/classics_spirits.png', this)">
-                            <img src="asstes/website-designs/alcohol design/classics_spirits.png" alt="View 2" />
-                        </div>
-                        <div class="blueprint-thumb-card"
-                            onclick="switchMainImage('asstes/website-designs/alcohol design/wine_closeup.jpg', this)">
-                            <img src="asstes/website-designs/alcohol design/wine_closeup.jpg" alt="View 3" />
-                        </div>
-                        <div class="blueprint-thumb-card"
-                            onclick="switchMainImage('asstes/website-designs/alcohol design/red_wine_grapes.jpg', this)">
-                            <img src="asstes/website-designs/alcohol design/red_wine_grapes.jpg" alt="View 4" />
-                        </div>
-                        <button class="blueprint-carousel-arrow" onclick="cycleThumbImage(1)"
-                            aria-label="Next image">›</button>
+                    <!-- Thumbnails Carousel Strip (Dynamic Only, Initially Hidden) -->
+                    <div class="blueprint-thumb-carousel" id="blueprintThumbCarousel" style="display: none;">
+                        <!-- Rendered dynamically when multiple product gallery images exist -->
                     </div>
                 </div>
 
                 <!-- Right Column: Editorial Product Information -->
                 <div class="blueprint-info-column">
-                    <h1 class="blueprint-title-serif" id="pdpTitle" style="margin-bottom: 6px;">
-                        Product Name
-                    </h1>
+                    <h1 class="blueprint-title-serif" id="pdpTitle" style="margin-bottom: 6px;"></h1>
 
-
-                    <!-- Clean Concise Description (Minimal) -->
-                    <p class="blueprint-description" id="pdpShortDesc" style="margin-top: 10px; font-size: 14.5px; line-height: 1.6;">
-                        Authentic premium liquor carefully selected for unmatched quality. Fast delivery in Kathmandu.
-                    </p>
+                    <!-- Clean Concise Description -->
+                    <p class="blueprint-description" id="pdpShortDesc" style="margin-top: 10px; font-size: 14.5px; line-height: 1.6;"></p>
 
                     <!-- Bottle Size / Volume Variant Selector -->
-                    <div class="pdp-size-selector-section" id="pdpSizeSelectorSection">
+                    <div class="pdp-size-selector-section" id="pdpSizeSelectorSection" style="display: none;">
                         <div class="pdp-size-header">
                             <span class="pdp-size-label">Select Size</span>
-                            <span class="pdp-selected-size-text" id="pdpSelectedSizeText">750ML</span>
+                            <span class="pdp-selected-size-text" id="pdpSelectedSizeText"></span>
                         </div>
                         <div class="pdp-size-chips-wrap" id="pdpSizeChipsWrap">
                             <!-- Dynamic Size Chips -->
@@ -2951,8 +2982,33 @@
 
                     <!-- Price Row -->
                     <div class="blueprint-price-line">
-                        <div class="blueprint-price-main" id="pdpPrice">NPR. 0.00</div>
+                        <div class="blueprint-price-main" id="pdpPrice"></div>
                     </div>
+
+                    <script>
+                        // Synchronous Pre-Paint Hydration: Apply cached/URL product instantly without flash
+                        (function() {
+                            const p = window.__PDP_PREHYDRATED__;
+                            if (p) {
+                                if (p.name) {
+                                    const t = document.getElementById('pdpTitle');
+                                    if (t) t.textContent = p.name;
+                                }
+                                if (p.price) {
+                                    const pr = document.getElementById('pdpPrice');
+                                    const num = typeof p.price === 'number' ? p.price : parseInt(String(p.price).replace(/[^0-9]/g, ''));
+                                    if (pr && num) pr.textContent = 'NPR. ' + num.toLocaleString('en-US') + '.00';
+                                }
+                                if (p.img) {
+                                    const img = document.getElementById('mainProductImg');
+                                    if (img) {
+                                        img.src = p.img;
+                                        img.alt = p.name || 'Product';
+                                    }
+                                }
+                            }
+                        })();
+                    </script>
 
                     <div class="blueprint-ctas-row">
                         <div class="blueprint-qty-box">
@@ -3133,15 +3189,12 @@
                     <!-- Product Summary Card -->
                     <div class="checkout-summary-box">
                         <div class="checkout-item-row">
-                            <img id="checkoutProductImg" src="asstes/website-designs/hero_liquor.png"
-                                alt="Product Thumbnail" class="checkout-item-img" />
+                            <img id="checkoutProductImg" src="" alt="Product Thumbnail" class="checkout-item-img" style="display:none;" onload="this.style.display='block';" />
                             <div class="checkout-item-details">
-                                <h4 id="checkoutProductName" class="checkout-item-name">The Macallan 18 Year Double Cask
-                                    750ML</h4>
-                                <div id="checkoutProductCat" class="checkout-item-meta">Single Malt Scotch • 750 ML
-                                </div>
+                                <h4 id="checkoutProductName" class="checkout-item-name"></h4>
+                                <div id="checkoutProductCat" class="checkout-item-meta"></div>
                                 <div class="checkout-item-price-qty">
-                                    <span id="checkoutUnitPrice" class="unit-price">NPR 48,600.00</span>
+                                    <span id="checkoutUnitPrice" class="unit-price"></span>
                                     <span class="qty-badge">Qty: <b id="checkoutQtyVal">1</b></span>
                                 </div>
                             </div>
@@ -8716,16 +8769,41 @@
                     storedProduct = JSON.parse(localStorage.getItem('annapurna_selected_product'));
                     if (storedProduct) {
                         if (!pId && storedProduct.id) pId = parseInt(storedProduct.id);
-                        if (!typeParam && storedProduct.type) typeParam = storedProduct.type;
+                        if (!typeParam && (storedProduct.type || storedProduct.department)) typeParam = storedProduct.type || storedProduct.department;
                         if (!nameParam && storedProduct.name) nameParam = storedProduct.name;
                     }
                 } catch (e) {}
 
-                let found = null;
                 let isGrocery = (typeParam === 'grocery');
+                let found = null;
 
-                // 1. Exact ID Match in preferred dataset
-                if (pId) {
+                // 1. Instant Cache-First: If matching item is in localStorage, use immediately (0ms lag)
+                if (storedProduct && ((pId && storedProduct.id == pId) || (nameParam && storedProduct.name === nameParam))) {
+                    const cleanPrice = storedProduct.priceRaw || parseInt(String(storedProduct.price).replace(/[^0-9]/g, '')) || 0;
+                    found = {
+                        id: storedProduct.id || pId,
+                        name: storedProduct.name,
+                        category: isGrocery ? (storedProduct.cat || 'Grocery Essential') : (storedProduct.cat || 'Fine Spirits'),
+                        cat: isGrocery ? (storedProduct.cat || 'Grocery Essential') : (storedProduct.cat || 'Fine Spirits'),
+                        brand: storedProduct.brand || 'Annapurna Selection',
+                        country: storedProduct.country || 'Nepal',
+                        img: storedProduct.img || (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png'),
+                        priceRaw: cleanPrice,
+                        minPrice: cleanPrice,
+                        maxPrice: cleanPrice,
+                        priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
+                        sizeDisplay: storedProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
+                        hasMultipleSizes: false,
+                        variants: storedProduct.variants || [],
+                        desc: storedProduct.desc || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
+                        rating: storedProduct.rating || '4.9',
+                        reviews: 50,
+                        gallery: [storedProduct.img || (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png')]
+                    };
+                }
+
+                // 2. Instant Static Catalog Match
+                if (!found && pId) {
                     if (isGrocery) {
                         found = GROCERY_PRODUCTS_DATA.find(p => p.id === pId);
                         if (!found && !typeParam) {
@@ -8741,12 +8819,10 @@
                     }
                 }
 
-                // 2. Name Matching (exact or fuzzy normalized)
+                // 3. Name Matching
                 const searchName = nameParam || (storedProduct && storedProduct.name);
-                if ((!found || (pId === 1 && searchName && !searchName.toLowerCase().includes('1768'))) && searchName) {
+                if (!found && searchName) {
                     const normSearch = normalizeText(searchName);
-                    
-                    // Search in preferred list first
                     const firstList = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
                     const secondList = isGrocery ? PRODUCTS_DATA : GROCERY_PRODUCTS_DATA;
 
@@ -8762,119 +8838,118 @@
                     }
                 }
 
-                // 3. Database API lookup if not in static list (e.g. database products)
-                if (!found && pId) {
-                    try {
-                        const res = await fetch(`/api/products/${pId}/`);
-                        if (res.ok) {
-                            const pData = await res.json();
-                            if (pData && pData.name) {
-                                isGrocery = (pData.department === 'grocery');
-                                const cleanPrice = parseInt(pData.selling_price) || 0;
-                                const imgPrimary = (pData.images && pData.images[0]) ? pData.images[0].image : (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png');
-                                found = {
-                                    id: pData.id,
-                                    name: pData.name,
-                                    category: pData.category ? pData.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
-                                    cat: pData.category ? pData.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
-                                    brand: pData.brand || 'Annapurna Selection',
-                                    country: pData.origin || 'Nepal',
-                                    img: imgPrimary,
-                                    priceRaw: cleanPrice,
-                                    minPrice: cleanPrice,
-                                    maxPrice: cleanPrice,
-                                    priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
-                                    sizeDisplay: pData.volume || (isGrocery ? '1 Pack' : '750ML'),
-                                    hasMultipleSizes: false,
-                                    variants: [],
-                                    desc: pData.description || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
-                                    rating: pData.rating || '4.9',
-                                    reviews: 50,
-                                    gallery: (pData.images && pData.images.length > 0) ? pData.images.map(i => i.image) : [imgPrimary]
-                                };
-                            }
-                        }
-                    } catch (e) {}
+                // If found from cache or static, render immediately to eliminate any visual delay
+                if (found) {
+                    applyProductToDOM(found, isGrocery);
                 }
 
-                // 3. Fallback from LocalStorage object if still not in static catalogs
-                if (!found && storedProduct && storedProduct.name) {
-                    const cleanPrice = storedProduct.priceRaw || parseInt(String(storedProduct.price).replace(/[^0-9]/g, '')) || 0;
+                // 4. Parallel Network Fetch: Get fresh DB details and Related Recommendations simultaneously
+                const fetchPromises = [];
+
+                // A: Fresh product details from API
+                if (pId) {
+                    fetchPromises.push(
+                        fetch(`/api/products/${pId}/`)
+                            .then(r => r.ok ? r.json() : null)
+                            .catch(() => null)
+                    );
+                } else {
+                    fetchPromises.push(Promise.resolve(null));
+                }
+
+                // B: Related recommendations from API
+                const dept = isGrocery ? 'grocery' : 'liquor';
+                fetchPromises.push(
+                    fetch(`/api/products/related/?product_id=${pId || ''}&name=${encodeURIComponent(searchName || '')}&department=${dept}`)
+                        .then(r => r.ok ? r.json() : [])
+                        .catch(() => [])
+                );
+
+                const [apiProduct, relatedProducts] = await Promise.all(fetchPromises);
+
+                // If fresh product data received from server, update DOM seamlessly
+                if (apiProduct && apiProduct.name) {
+                    isGrocery = (apiProduct.department === 'grocery');
+                    const cleanPrice = parseInt(apiProduct.selling_price) || 0;
+                    const imgPrimary = (apiProduct.images && apiProduct.images[0]) ? apiProduct.images[0].image : (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png');
                     found = {
-                        id: storedProduct.id || (isGrocery ? 399 : 299),
-                        name: storedProduct.name,
-                        category: isGrocery ? (storedProduct.cat || 'Grocery Essential') : (storedProduct.cat || 'Fine Spirits'),
-                        cat: isGrocery ? (storedProduct.cat || 'Grocery Essential') : (storedProduct.cat || 'Fine Spirits'),
-                        brand: storedProduct.brand || 'Annapurna Selection',
-                        country: storedProduct.country || 'Nepal',
-                        img: storedProduct.img || (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png'),
+                        id: apiProduct.id,
+                        name: apiProduct.name,
+                        category: apiProduct.category ? apiProduct.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                        cat: apiProduct.category ? apiProduct.category.name : (isGrocery ? 'Grocery Essential' : 'Fine Spirits'),
+                        brand: apiProduct.brand || 'Annapurna Selection',
+                        country: apiProduct.origin || 'Nepal',
+                        img: imgPrimary,
                         priceRaw: cleanPrice,
                         minPrice: cleanPrice,
                         maxPrice: cleanPrice,
                         priceDisplay: `Rs. ${cleanPrice.toLocaleString()}`,
-                        sizeDisplay: storedProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
+                        sizeDisplay: apiProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
                         hasMultipleSizes: false,
-                        variants: [
-                            {
-                                original_name: storedProduct.name,
-                                label: storedProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
-                                volume: storedProduct.volume || (isGrocery ? '1 Pack' : '750ML'),
-                                priceRaw: cleanPrice,
-                                priceFormatted: `Rs. ${cleanPrice.toLocaleString()}`,
-                                img: storedProduct.img || (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png'),
-                                sku: 'ANN' + (storedProduct.id || '999')
-                            }
-                        ],
-                        desc: storedProduct.desc || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
-                        rating: storedProduct.rating || '4.9',
-                        reviews: storedProduct.reviews || 50,
-                        gallery: [storedProduct.img || (isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png')]
+                        variants: [],
+                        desc: apiProduct.description || 'Premium authentic quality product available for fast delivery throughout Kathmandu Valley.',
+                        rating: apiProduct.rating || '4.9',
+                        reviews: 50,
+                        gallery: (apiProduct.images && apiProduct.images.length > 0) ? apiProduct.images.map(i => i.image) : [imgPrimary]
                     };
-                }
-
-                // 4. Default fallback
-                if (!found) {
+                    applyProductToDOM(found, isGrocery);
+                } else if (!found) {
+                    // Fallback to first item of catalog only if completely unfound
                     const fallbackSource = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
                     found = fallbackSource[0];
+                    applyProductToDOM(found, isGrocery);
                 }
 
+                // Render related products from the parallel response
+                renderSimilarProductsList(relatedProducts, isGrocery);
+            }
+
+            function applyProductToDOM(prod, isGrocery) {
                 isCurrentGrocery = isGrocery;
-                activeProduct = found;
-                const dataSource = isGrocery ? GROCERY_PRODUCTS_DATA : PRODUCTS_DATA;
+                activeProduct = prod;
 
-
-                // Page Document Title
-                document.title = `${activeProduct.name} | Annapurna ${isGrocery ? 'Groceries' : 'Liquors'}`;
+                // Document Title
+                document.title = `${prod.name} | Annapurna ${isGrocery ? 'Groceries' : 'Liquors'}`;
 
                 // Title & Details
                 const titleEl = document.getElementById('pdpTitle');
-                if (titleEl) titleEl.textContent = activeProduct.name;
+                if (titleEl) titleEl.textContent = prod.name;
 
                 const scoreEl = document.getElementById('pdpScore');
-                if (scoreEl) scoreEl.textContent = activeProduct.rating;
+                if (scoreEl) scoreEl.textContent = prod.rating || '4.9';
 
                 const imgEl = document.getElementById('mainProductImg');
-                if (imgEl) {
-                    imgEl.src = activeProduct.img;
-                    imgEl.alt = activeProduct.name;
+                const heroCanvas = document.getElementById('pdpHeroCanvas');
+                if (imgEl && prod.img) {
+                    if (imgEl.src !== prod.img) {
+                        imgEl.src = prod.img;
+                    }
+                    imgEl.alt = prod.name;
+                    imgEl.onload = function() {
+                        imgEl.classList.add('loaded');
+                        if (heroCanvas) heroCanvas.classList.remove('skeleton-shimmer');
+                    };
+                    imgEl.onerror = function() {
+                        imgEl.src = isGrocery ? 'asstes/website-designs/grocries/R.jpg' : 'asstes/website-designs/hero_liquor.png';
+                        if (heroCanvas) heroCanvas.classList.remove('skeleton-shimmer');
+                    };
                 }
 
-
-                // Description (Clean & Concise)
+                // Description
                 const descEl = document.getElementById('pdpShortDesc');
                 if (descEl) {
-                    descEl.textContent = activeProduct.desc || 'Authentic quality product available for quick delivery.';
+                    descEl.textContent = prod.desc || 'Authentic quality product available for quick delivery.';
                 }
 
-                // Render Size / Volume Selector
-                renderSizeSelector(activeProduct);
+                // Size Selector & Price
+                renderSizeSelector(prod);
 
                 // Reset Quantity
                 currentQty = 1;
                 const qtyValEl = document.getElementById('pdpQtyVal');
                 if (qtyValEl) qtyValEl.textContent = '1';
 
-                // Category Sub-Navigation Bar Dynamic Population
+                // Category Sub-Navigation
                 const catSubnavContainer = document.querySelector('.category-subnav-container');
                 if (catSubnavContainer) {
                     if (isGrocery) {
@@ -8919,15 +8994,13 @@
                         : "Search single malts, fine wines, vintage cognac, craft beers...";
                 }
 
-                // Dynamic Product Thumbnail Gallery Carousel
-                renderThumbnailStrip(activeProduct);
+                // Thumbnail Strip
+                renderThumbnailStrip(prod);
 
-                // Dynamic Similar Products ("You May Also Like")
-                renderSimilarProducts(isGrocery, dataSource);
-
-                // Update Wishlist button state
+                // Update Wishlist
                 updateProductFavButtonsState();
             }
+
 
             // Thumbnail Gallery Handler
             let currentThumbIndex = 0;
@@ -9013,8 +9086,8 @@
                 `;
             }
 
-            // Render Similar / Recommended Products from Server API
-            async function renderSimilarProducts(isGrocery = false, dataSource = PRODUCTS_DATA) {
+            // Render Similar / Recommended Products List Instantly
+            function renderSimilarProductsList(relatedList, isGrocery = false) {
                 const container = document.getElementById('similarProductsContainer');
                 const section = document.querySelector('.blueprint-related-section');
                 if (!container) return;
@@ -9027,32 +9100,29 @@
                     if (span) span.textContent = isGrocery ? 'View All Groceries' : 'View All Drinks';
                 }
 
+                if (Array.isArray(relatedList) && relatedList.length > 0) {
+                    if (section) section.style.display = '';
+                    container.innerHTML = relatedList.map(item => createBlueprintCardHTML(item, isGrocery)).join('');
+                } else {
+                    if (section) section.style.display = 'none';
+                    container.innerHTML = '';
+                }
+            }
+
+            async function renderSimilarProducts(isGrocery = false) {
                 const pId = activeProduct ? activeProduct.id : null;
                 const pName = activeProduct ? (activeProduct.name || '') : '';
                 const dept = isGrocery ? 'grocery' : 'liquor';
-
                 try {
                     const apiUrl = `/api/products/related/?product_id=${pId || ''}&name=${encodeURIComponent(pName)}&department=${dept}`;
                     const res = await fetch(apiUrl);
                     if (res.ok) {
                         const related = await res.json();
-                        if (Array.isArray(related) && related.length > 0) {
-                            if (section) section.style.display = '';
-                            container.innerHTML = related.map(item => createBlueprintCardHTML(item, isGrocery)).join('');
-                            return;
-                        } else {
-                            // Rule 5: If there are 0 matches, hide the entire "You May Also Like" section
-                            if (section) section.style.display = 'none';
-                            container.innerHTML = '';
-                            return;
-                        }
+                        renderSimilarProductsList(related, isGrocery);
+                        return;
                     }
-                } catch (err) {
-                    console.warn('Could not fetch server-side related products:', err);
-                }
-
-                // If error or 0 matches, safely hide section
-                if (section) section.style.display = 'none';
+                } catch (e) {}
+                renderSimilarProductsList([], isGrocery);
             }
 
             let currentOrderItems = [];
