@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
-from django.views.generic import RedirectView
+from django.views.static import serve as django_static_serve
 from .storefront import serve_storefront
 
 urlpatterns = [
@@ -17,10 +17,10 @@ urlpatterns = [
     path('sales/', include('sales.urls')),
     path('reports/', include('reports.urls')),
     path('api/', include('api.urls')),
+    re_path(r'^media/(?P<path>.*)$', django_static_serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Unified Single-Port Storefront Routes (Liquor & Grocery store frontend)
